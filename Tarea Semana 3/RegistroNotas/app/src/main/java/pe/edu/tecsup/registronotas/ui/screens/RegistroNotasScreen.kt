@@ -1,5 +1,6 @@
 package pe.edu.tecsup.registronotas.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -85,6 +87,17 @@ fun RegistroNotasScreen() {
     // resultado mostrado quedaria desactualizado: se oculta y hay que volver
     // a pulsar CALCULAR PROMEDIO.
     fun invalidarResultado() {
+        resultado = null
+    }
+
+    /** Reto opcional: LIMPIAR deja la pantalla como en la Figura 1. */
+    fun limpiar() {
+        notaFundamentos = 0f
+        notaPoo = 0f
+        notaMoviles = 0f
+        notaBaseDatos = 0f
+        redondear = false
+        confirmado = false
         resultado = null
     }
 
@@ -268,6 +281,30 @@ fun RegistroNotasScreen() {
                 ) {
                     Text(
                         text = "CALCULAR PROMEDIO",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                Spacer(Modifier.height(10.dp))
+
+                // --- Reto opcional: boton LIMPIAR ---
+                OutlinedButton(
+                    onClick = { limpiar() },
+                    shape = RoundedCornerShape(percent = 50),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MoradoPrimario,
+                        containerColor = Color.Transparent
+                    ),
+                    border = BorderStroke(
+                        width = 1.5.dp,
+                        color = MoradoPrimario
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Text(
+                        text = "LIMPIAR",
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
