@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import pe.edu.tecsup.registronotas.model.Curso
 import pe.edu.tecsup.registronotas.model.NOTA_MAXIMA
 import pe.edu.tecsup.registronotas.model.NOTA_MINIMA
@@ -28,6 +29,7 @@ import pe.edu.tecsup.registronotas.ui.theme.MoradoPrimario
 import pe.edu.tecsup.registronotas.ui.theme.MoradoSuave
 import pe.edu.tecsup.registronotas.ui.theme.TextoPrincipal
 import pe.edu.tecsup.registronotas.ui.theme.TextoSecundario
+
 
 /**
  * Una fila de curso: nombre + peso, badge con la nota en vivo y el Slider.
@@ -74,7 +76,7 @@ fun FilaCurso(
 
             // Badge con la nota elegida: se refresca en vivo al mover el Slider
             Text(
-                text = nota.toInt().toString(),
+                text = nota.roundToInt().toString(),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,

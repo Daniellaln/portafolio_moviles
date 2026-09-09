@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import pe.edu.tecsup.registronotas.logic.CalculadoraNotas
 import pe.edu.tecsup.registronotas.logic.ResultadoNotas
 import pe.edu.tecsup.registronotas.model.CURSOS
@@ -115,12 +116,12 @@ fun RegistroNotasScreen() {
             )
         },
         bottomBar = {
-            // Pie fijo abajo, siempre visible
             Text(
                 text = "Desarrollado por: $NOMBRE_DESARROLLADOR",
                 style = MaterialTheme.typography.labelSmall,
                 color = TextoSecundario,
                 textAlign = TextAlign.Center,
+                fontSize = 18.sp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(FondoDegradadoBottom)
@@ -252,10 +253,10 @@ fun RegistroNotasScreen() {
                 Button(
                     onClick = {
                         val notas = listOf(
-                            notaFundamentos.toInt(),
-                            notaPoo.toInt(),
-                            notaMoviles.toInt(),
-                            notaBaseDatos.toInt()
+                            notaFundamentos.roundToInt(),
+                            notaPoo.roundToInt(),
+                            notaMoviles.roundToInt(),
+                            notaBaseDatos.roundToInt()
                         )
                         resultado = CalculadoraNotas.calcular(
                             notas = notas,
