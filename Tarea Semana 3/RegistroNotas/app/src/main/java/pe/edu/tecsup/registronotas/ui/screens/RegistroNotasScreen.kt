@@ -56,11 +56,7 @@ import pe.edu.tecsup.registronotas.ui.theme.TextoPrincipal
 import pe.edu.tecsup.registronotas.ui.theme.TextoSecundario
 import pe.edu.tecsup.registronotas.ui.theme.VerdeConfirmacion
 
-/**
- * >>> CAMBIA AQUI TU NOMBRE COMPLETO ANTES DE ENTREGAR <<<
- * Es el texto que aparece en el pie de la pantalla.
- */
-private const val NOMBRE_DESARROLLADOR = "(tu nombre completo)"
+private const val NOMBRE_DESARROLLADOR = "Daniella Leon Andres"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -38,7 +38,7 @@ Abre `app/src/main/java/pe/edu/tecsup/registronotas/ui/screens/RegistroNotasScre
 y cambia la constante del pie de página:
 
 ```kotlin
-private const val NOMBRE_DESARROLLADOR = "(tu nombre completo)"
+private const val NOMBRE_DESARROLLADOR = "Daniella Leon Andres"
 ```
 
 ---
