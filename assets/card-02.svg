@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 210" width="520" height="210" role="img" aria-label="Semana 02: Carrito de compras">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FDE0F0"/><stop offset="55%" stop-color="#EFD9FA"/><stop offset="100%" stop-color="#DDC3F7"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.60"/>
+      <stop offset="55%" stop-color="#FFFFFF" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.45"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.25"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="22"/></filter>
+  </defs>
+
+  <clipPath id="c"><rect width="520" height="210" rx="24"/></clipPath>
+  <g clip-path="url(#c)" opacity="1">
+    <rect width="520" height="210" fill="url(#bg)"/>
+    <g filter="url(#soft)">
+      <circle cx="70" cy="40" r="62" fill="#FFFFFF" opacity="0.45">
+        <animate attributeName="cy" values="40;72;40" dur="9s" repeatCount="indefinite"/></circle>
+      <circle cx="460" cy="180" r="70" fill="#FFFFFF" opacity="0.35">
+        <animate attributeName="cx" values="460;400;460" dur="11s" repeatCount="indefinite"/></circle>
+    </g>
+    <rect x="14" y="14" width="492" height="182" rx="20" fill="url(#glass)"/>
+    <rect x="14" y="14" width="492" height="182" rx="20" fill="none" stroke="url(#edge)" stroke-width="1.5"/>
+    <rect x="-180" y="14" width="130" height="182" fill="url(#shine)" transform="skewX(-16)">
+      <animate attributeName="x" values="-180;620;-180" dur="7s" repeatCount="indefinite"/></rect>
+    <text x="42" y="60" font-family="Verdana, sans-serif" font-size="12" fill="#8A6FC0" letter-spacing="3">SEMANA 02</text>
+    <text x="42" y="98" font-family="Georgia, serif" font-size="27" font-weight="bold" fill="#5B3F94">Carrito de compras</text>
+    <text x="42" y="122" font-family="Verdana, sans-serif" font-size="12.5" fill="#7C63B4">Logica en Kotlin puro</text>
+    <text x="42" y="144" font-family="Verdana, sans-serif" font-size="10" fill="#7C63B4">IGV, descuentos y producto más caro</text>
+    <rect x="42" y="152" width="45" height="26" rx="13" fill="#FFFFFF" opacity="0.62"/><text x="64" y="169" text-anchor="middle" font-family="Verdana, sans-serif" font-size="11" fill="#6B4E9C">when</text><rect x="96" y="152" width="102" height="26" rx="13" fill="#FFFFFF" opacity="0.62"/><text x="147" y="169" text-anchor="middle" font-family="Verdana, sans-serif" font-size="11" fill="#6B4E9C">maxByOrNull</text><rect x="207" y="152" width="37" height="26" rx="13" fill="#FFFFFF" opacity="0.62"/><text x="225" y="169" text-anchor="middle" font-family="Verdana, sans-serif" font-size="11" fill="#6B4E9C">IGV</text>
+    <path d="M450 44 l2.7 8 8 2.7 -8 2.7 -2.7 8 -2.7 -8 -8 -2.7 8 -2.7z" fill="#FFF"><animate attributeName="opacity" values="0.25;1;0.25" dur="3.1s" repeatCount="indefinite"/></path>
+    <path d="M474 78 l2.0 6 6 2.0 -6 2.0 -2.0 6 -2.0 -6 -6 -2.0 6 -2.0z" fill="#FFF"><animate attributeName="opacity" values="1;0.25;1" dur="4.2s" repeatCount="indefinite"/></path>
+  </g>
+</svg>

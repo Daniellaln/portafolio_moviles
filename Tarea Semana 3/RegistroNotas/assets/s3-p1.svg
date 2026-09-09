@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 228 40" width="228" height="40" role="img" aria-label="4 casos de prueba OK">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#FFD9E8"/><stop offset="100%" stop-color="#E3D0FA"/></linearGradient></defs>
+  <rect width="228" height="40" rx="20.0" fill="url(#g)"/>
+  <text x="114" y="25.0" text-anchor="middle" font-family="Verdana, sans-serif" font-size="13" font-weight="bold" fill="#5B3F94">4 casos de prueba OK</text>
+</svg>

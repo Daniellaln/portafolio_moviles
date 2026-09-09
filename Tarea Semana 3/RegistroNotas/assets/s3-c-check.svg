@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 104" width="430" height="104" role="img" aria-label="Checkbox: checked / onCheckedChange">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#F0DAFA"/><stop offset="100%" stop-color="#E2CCF9"/></linearGradient></defs>
+  <rect width="430" height="104" rx="18" fill="url(#g)"/>
+  <circle cx="52" cy="52.0" r="26" fill="#FFFFFF" opacity="0.55"/>
+  <ellipse cx="52.0" cy="42.7" rx="6.3" ry="6.3" fill="#FFFFFF" opacity="0.95"/><ellipse cx="60.8" cy="49.1" rx="6.3" ry="6.3" fill="#FFFFFF" opacity="0.95"/><ellipse cx="57.5" cy="59.5" rx="6.3" ry="6.3" fill="#FFFFFF" opacity="0.95"/><ellipse cx="46.5" cy="59.5" rx="6.3" ry="6.3" fill="#FFFFFF" opacity="0.95"/><ellipse cx="43.2" cy="49.1" rx="6.3" ry="6.3" fill="#FFFFFF" opacity="0.95"/><circle cx="52" cy="52.0" r="4.5" fill="#FFF" opacity="0.9"/>
+  <text x="94" y="48.0" font-family="Georgia, serif" font-size="17" font-weight="bold" fill="#5B3F94">Checkbox</text>
+  <text x="94" y="70.0" font-family="Verdana, sans-serif" font-size="11.5" fill="#7C63B4">checked / onCheckedChange</text>
+  <path d="M400 18 l1.9 5.5 5.5 1.9 -5.5 1.9 -1.9 5.5 -1.9 -5.5 -5.5 -1.9 5.5 -1.9z" fill="#FFF"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.3s" repeatCount="indefinite"/></path>
+</svg>

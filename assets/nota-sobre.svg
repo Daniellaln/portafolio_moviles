@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 154" width="900" height="154" role="img" aria-label="Estudiante de Diseno y Desarrollo de Software en Tecsup. Aqui guardo todo lo que hago en Programacion en Moviles: cada semana tiene su carpeta con el proyecto completo, listo para abrir en Android Studio. Todo esta hecho en Kotlin con Jetpack Compose y Material 3.">
+  <defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#FFB8DC"/><stop offset="100%" stop-color="#C9AEF5"/></linearGradient></defs>
+  <rect width="900" height="154" rx="14" fill="#FDF4FB"/>
+  <rect x="0" y="0" width="7" height="154" rx="3.5" fill="url(#b)"/>
+  <rect width="900" height="154" rx="14" fill="none" stroke="#E3D0FA" stroke-width="1"/>
+  <ellipse cx="866.0" cy="19.8" rx="4.2" ry="4.2" fill="#FFB8DC" opacity="0.5"/><ellipse cx="871.9" cy="24.1" rx="4.2" ry="4.2" fill="#FFB8DC" opacity="0.5"/><ellipse cx="869.6" cy="31.0" rx="4.2" ry="4.2" fill="#FFB8DC" opacity="0.5"/><ellipse cx="862.4" cy="31.0" rx="4.2" ry="4.2" fill="#FFB8DC" opacity="0.5"/><ellipse cx="860.1" cy="24.1" rx="4.2" ry="4.2" fill="#FFB8DC" opacity="0.5"/><circle cx="866" cy="26" r="3.0" fill="#FFF" opacity="0.9"/>
+  <text x="46" y="42" font-family="Verdana, sans-serif" font-size="14.5" font-weight="bold" fill="#5B3F94">Estudiante de Diseno y Desarrollo de Software en Tecsup.</text><text x="46" y="72" font-family="Verdana, sans-serif" font-size="14.5" font-weight="normal" fill="#7C63B4">Aqui guardo todo lo que hago en Programacion en Moviles: cada semana</text><text x="46" y="102" font-family="Verdana, sans-serif" font-size="14.5" font-weight="normal" fill="#7C63B4">tiene su carpeta con el proyecto completo, listo para abrir en Android Studio.</text><text x="46" y="132" font-family="Verdana, sans-serif" font-size="14.5" font-weight="normal" fill="#7C63B4">Todo esta hecho en Kotlin con Jetpack Compose y Material 3.</text>
+</svg>

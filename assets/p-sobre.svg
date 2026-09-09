@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 186" width="900" height="186" role="img" aria-label="Sobre este portafolio">
+<defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFE3F1"/><stop offset="55%" stop-color="#F0DAFA"/><stop offset="100%" stop-color="#D8C2F8"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.60"/>
+      <stop offset="55%" stop-color="#FFFFFF" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.45"/></linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.25"/></linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="20"/></filter>
+  </defs>
+  <clipPath id="c"><rect width="900" height="186" rx="26"/></clipPath>
+  <g clip-path="url(#c)">
+    <rect width="900" height="186" fill="url(#bg)"/>
+    <g filter="url(#soft)">
+      <circle cx="90" cy="30" r="62" fill="#FFB8DC" opacity="0.55">
+        <animate attributeName="cy" values="30;70;30" dur="9s" repeatCount="indefinite"/></circle>
+      <circle cx="820" cy="156" r="70" fill="#B79CF2" opacity="0.5">
+        <animate attributeName="cx" values="820;750;820" dur="11s" repeatCount="indefinite"/></circle>
+    </g>
+    <rect x="16" y="16" width="868" height="154" rx="22" fill="url(#glass)"/>
+    <rect x="16" y="16" width="868" height="154" rx="22" fill="none" stroke="url(#edge)" stroke-width="1.5"/>
+    <rect x="-200" y="16" width="140" height="154" fill="url(#shine)" transform="skewX(-16)">
+      <animate attributeName="x" values="-200;1010;-200" dur="7s" repeatCount="indefinite"/></rect>
+    <text x="450.0" y="78" text-anchor="middle" font-family="Georgia, serif"
+          font-size="30" font-weight="bold" fill="#5B3F94" letter-spacing="1.2">Sobre este portafolio</text>
+    <text x="450.0" y="132" text-anchor="middle" font-family="Verdana, sans-serif" font-size="16" font-weight="normal" fill="#7157A8">Aqui guardo todos los trabajos del curso, una carpeta por semana.</text><text x="450.0" y="166" text-anchor="middle" font-family="Verdana, sans-serif" font-size="16" font-weight="bold" fill="#5B3F94">Cada proyecto esta hecho en Kotlin con Jetpack Compose.</text>
+    <path d="M56 52 l2.7 8 8 2.7 -8 2.7 -2.7 8 -2.7 -8 -8 -2.7 8 -2.7z" fill="#FFF"><animate attributeName="opacity" values="0.25;1;0.25" dur="3.0s" repeatCount="indefinite"/></path>
+    <path d="M836 122 l2.4 7 7 2.4 -7 2.4 -2.4 7 -2.4 -7 -7 -2.4 7 -2.4z" fill="#FFF"><animate attributeName="opacity" values="1;0.2;1" dur="3.8s" repeatCount="indefinite"/></path>
+  </g>
+</svg>
