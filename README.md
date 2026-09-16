@@ -17,7 +17,7 @@
 
 <img src="assets/sec-avance.svg" width="88%" alt="Avance" />
 
-<img src="assets/timeline.svg" width="94%" alt="Avance del ciclo: 3 de 16 semanas" />
+<img src="assets/timeline.svg" width="94%" alt="Avance del ciclo: 4 de 16 semanas" />
 
 <br/><br/>
 
@@ -25,18 +25,15 @@
 
 <br/>
 
-<a href="Semana%2001/Laboratorio1-PM/"><img src="assets/card-01.svg" width="45%" alt="Semana 01 - Labb00: primer contacto con Jetpack Compose" /></a>
-<a href="Semana%2002/lab02-Carrito-Leon/"><img src="assets/card-02.svg" width="45%" alt="Semana 02 - Carrito de compras: logica en Kotlin puro" /></a>
+<a href="Semana01/Laboratorio1-PM/"><img src="assets/card-01.svg" width="45%" alt="Semana 01 - Labb00: primer contacto con Jetpack Compose" /></a>
+<a href="Semana02/lab02-Carrito-Leon/"><img src="assets/card-02.svg" width="45%" alt="Semana 02 - Carrito de compras: logica en Kotlin puro" /></a>
 
 <a href="Tarea%20Semana%203/RegistroNotas/"><img src="assets/card-03.svg" width="45%" alt="Semana 03 - Registro de Notas: promedio ponderado de 4 cursos" /></a>
-<img src="assets/card-04.svg" width="45%" alt="Semana 04 - proximamente. Las semanas 05 a 16 se agregan durante el ciclo." />
+<a href="Semana04/"><img src="assets/card-04.svg" width="45%" alt="Semana 04 - Lista de Tareas: agregar, completar y eliminar tareas" /></a>
 
-</div>
+<img src="assets/card-05.svg" width="45%" alt="Semana 05 - proximamente. Se ira agregando conforme avance el ciclo." />
 
-
-<div align="center">
-
-<br/>
+<br/><br/>
 
 <img src="assets/sec-aprendo.svg" width="88%" alt="Lo que voy aprendiendo" />
 
@@ -45,10 +42,27 @@
 <img src="assets/t-estado.svg" width="45%" alt="Estado y recomposicion: remember + mutableStateOf" />
 <img src="assets/t-controles.svg" width="45%" alt="Controles de Compose: Slider, Switch, Checkbox, Button" />
 
+<img src="assets/t-listas.svg" width="45%" alt="Listas dinamicas: LazyColumn + mutableStateListOf" />
 <img src="assets/t-arqui.svg" width="45%" alt="Estructura: separar la logica de la interfaz" />
+
 <img src="assets/t-diseno.svg" width="45%" alt="Diseno: Material 3, temas, color y tipografia" />
 
-<br/><br/>
+</div>
+
+## Ramas del repositorio
+
+A partir de la semana 4 el repositorio tiene dos ramas:
+
+| Rama | Qué contiene |
+|:--|:--|
+| **`sinia`** | Los diseños hechos por mí, sin apoyo de IA |
+| **`main`** | El diseño final, trabajado con ayuda de IA sobre la base anterior |
+
+La idea es que se vea el punto de partida propio y hasta dónde llegó cada proyecto después.
+
+<div align="center">
+
+<br/>
 
 <img src="assets/sec-activi.svg" width="88%" alt="Mi actividad" />
 
