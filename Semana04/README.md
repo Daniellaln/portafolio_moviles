@@ -41,7 +41,7 @@ El campo no acepta tareas vacías: si el texto está en blanco, el botón no hac
 
 |                  Lista vacía                  |                  Con tareas                   |              Algunas completadas              |
 |:---------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:|
-| <img src="./capturas/app1.png" width="230" /> | <img src="./capturas/app2.png" width="230" /> | <img src="./capturas/app3.png" width="230" /> |
+| <img src="./capturas/app1.png" width="250" /> | <img src="./capturas/app2.png" width="250" /> | <img src="./capturas/app3.png" width="250" /> |
 
 
 <div align="center">
