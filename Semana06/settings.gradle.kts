@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "tecsupFit"
+rootProject.name = "TecsupFit"
 include(":app")
