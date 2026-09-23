@@ -13,6 +13,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.leon.tecsupfit.navigation.Pantallas
 import com.leon.tecsupfit.ui.theme.VerdeTecsup
@@ -20,7 +22,7 @@ import com.leon.tecsupfit.ui.theme.VerdeTecsup
 data class ItemBottomBar(
     val ruta: String,
     val etiqueta: String,
-    val icono: androidx.compose.ui.graphics.vector.ImageVector
+    val icono: ImageVector
 )
 
 private val itemsBottomBar = listOf(
@@ -52,7 +54,7 @@ fun TecsupFitBottomBar(rutaActual: String, onNavegar: (String) -> Unit) {
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = VerdeTecsup,
                     selectedTextColor = VerdeTecsup,
-                    indicatorColor = androidx.compose.ui.graphics.Color(0xFFDCEFE4)
+                    indicatorColor = Color(0xFFDCEFE4)
                 )
             )
         }
