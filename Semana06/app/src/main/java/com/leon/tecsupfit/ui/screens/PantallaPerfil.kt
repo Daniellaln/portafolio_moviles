@@ -27,7 +27,7 @@ import com.leon.tecsupfit.ui.theme.VerdeClaro
 import com.leon.tecsupfit.ui.theme.VerdeTecsup
 
 @Composable
-fun PantallaPerfil(rutaActual: String, onNavegar: (String) -> Unit) {
+fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String) -> Unit) {
     Scaffold(
         bottomBar = { TecsupFitBottomBar(rutaActual = rutaActual, onNavegar = onNavegar) }
     ) { padding ->
@@ -56,7 +56,7 @@ fun PantallaPerfil(rutaActual: String, onNavegar: (String) -> Unit) {
             }
 
             Text(
-                text = "Diego Ramos",
+                text = nombreUsuario,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 12.dp)
             )

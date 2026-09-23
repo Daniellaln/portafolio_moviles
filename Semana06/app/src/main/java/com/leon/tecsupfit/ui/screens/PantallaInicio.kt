@@ -16,7 +16,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FitnessCenter
+import com.leon.tecsupfit.ui.components.IconoPesa
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
@@ -135,10 +135,9 @@ private fun TarjetaClase(clase: ClaseFitness, onClick: () -> Unit) {
                     .background(VerdeClaro, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Filled.FitnessCenter,
-                    contentDescription = null,
-                    tint = VerdeTecsup
+                IconoPesa(
+                    modifier = Modifier.size(22.dp),
+                    color = VerdeTecsup
                 )
             }
             Column {

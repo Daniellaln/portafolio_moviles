@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.leon.tecsupfit.data.ClaseFitness
+import com.leon.tecsupfit.ui.components.IconoPesa
 import com.leon.tecsupfit.ui.theme.VerdeClaro
 import com.leon.tecsupfit.ui.theme.VerdeTecsup
 
@@ -75,11 +77,11 @@ fun PantallaDetalleClase(
                     .background(VerdeClaro, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Filled.FitnessCenter,
-                    contentDescription = null,
-                    tint = VerdeTecsup,
-                    modifier = Modifier.height(48.dp)
+                IconoPesa(
+                    modifier = Modifier
+                        .height(70.dp)
+                        .width(100.dp),
+                    color = VerdeTecsup
                 )
             }
 

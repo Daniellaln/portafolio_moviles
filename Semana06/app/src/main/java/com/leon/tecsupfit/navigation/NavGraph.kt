@@ -29,7 +29,7 @@ fun TecsupFitNavGraph(navController: NavHostController) {
 
         composable(Pantallas.INICIO) {
             PantallaInicio(
-                nombreUsuario = "Diego",
+                nombreUsuario = "Daniella",
                 rutaActual = rutaActual,
                 onNavegar = { ruta -> navController.navigate(ruta) },
                 onClaseSeleccionada = { clase ->
@@ -90,6 +90,7 @@ fun TecsupFitNavGraph(navController: NavHostController) {
 
         composable(Pantallas.PERFIL) {
             PantallaPerfil(
+                nombreUsuario = "Daniella Leon",
                 rutaActual = rutaActual,
                 onNavegar = { ruta -> navController.navigate(ruta) }
             )
