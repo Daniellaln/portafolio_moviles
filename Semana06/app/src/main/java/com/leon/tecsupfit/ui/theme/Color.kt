@@ -2,10 +2,11 @@ package com.leon.tecsupfit.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Verde principal de la marca, usado en el header y en los botones.
+val VerdeTecsup = Color(0xFF1B5E3C)
+val VerdeClaro = Color(0xFFDCEFE4)
+val VerdeBadge = Color(0xFF2E7D4F)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val FondoGris = Color(0xFFF5F5F5)
+val TarjetaGris = Color(0xFFEDEDED)
+val TextoSecundario = Color(0xFF757575)
