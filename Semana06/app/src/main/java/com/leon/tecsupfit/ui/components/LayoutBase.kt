@@ -14,6 +14,9 @@ import androidx.compose.ui.res.painterResource
 import com.leon.tecsupfit.R
 import com.leon.tecsupfit.ui.theme.BasePorcelana
 
+/**
+ * Layout base espacioso con fondo prismático claro y soporte para dock flotante.
+ */
 @Composable
 fun LayoutBase(
     rutaActual: String? = null,
@@ -33,20 +36,20 @@ fun LayoutBase(
                 .fillMaxSize()
                 .background(BasePorcelana)
         ) {
-            // Fondo prisma con capa clara encima
+            // Fondo prisma claro (baja opacidad para profundidad sutil)
             Image(
                 painter = painterResource(id = R.drawable.fondo_prisma),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                alpha = 0.4f
+                alpha = 0.25f
             )
             
-            // Capa clara (overlay) para suavizar
+            // Capa porcelana translúcida para legibilidad
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(BasePorcelana.copy(alpha = 0.6f))
+                    .background(BasePorcelana.copy(alpha = 0.7f))
             )
 
             Box(modifier = Modifier.padding(padding)) {

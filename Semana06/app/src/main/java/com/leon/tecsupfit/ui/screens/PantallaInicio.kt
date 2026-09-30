@@ -56,8 +56,10 @@ import com.leon.tecsupfit.R
 import com.leon.tecsupfit.data.ClaseFitness
 import com.leon.tecsupfit.data.DatosClases
 import com.leon.tecsupfit.data.UsuarioManager
+import com.leon.tecsupfit.ui.components.DurationScreen
 import com.leon.tecsupfit.ui.components.ImageUtils
 import com.leon.tecsupfit.ui.components.LayoutBase
+import com.leon.tecsupfit.ui.components.botonClickAnimado
 import com.leon.tecsupfit.ui.theme.AzulProfundo
 import com.leon.tecsupfit.ui.theme.GlassBorder
 import com.leon.tecsupfit.ui.theme.LuzAqua
@@ -84,7 +86,7 @@ fun PantallaInicio(
         onNavegar = onNavegar
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            HeaderInicio(nombreUsuario)
+            HeaderInicio()
 
             SelectorModo(
                 modoActual = modoSeleccionado,
@@ -94,13 +96,12 @@ fun PantallaInicio(
             AnimatedContent(
                 targetState = modoSeleccionado,
                 transitionSpec = {
-                    val duration = 230
                     if (targetState.ordinal > initialState.ordinal) {
-                        (slideInHorizontally(animationSpec = tween(duration)) { it } + fadeIn(animationSpec = tween(duration)))
-                            .togetherWith(slideOutHorizontally(animationSpec = tween(duration)) { -it } + fadeOut(animationSpec = tween(duration)))
+                        (slideInHorizontally(animationSpec = tween(DurationScreen)) { it } + fadeIn(animationSpec = tween(DurationScreen)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(DurationScreen)) { -it } + fadeOut(animationSpec = tween(DurationScreen)))
                     } else {
-                        (slideInHorizontally(animationSpec = tween(duration)) { -it } + fadeIn(animationSpec = tween(duration)))
-                            .togetherWith(slideOutHorizontally(animationSpec = tween(duration)) { it } + fadeOut(animationSpec = tween(duration)))
+                        (slideInHorizontally(animationSpec = tween(DurationScreen)) { -it } + fadeIn(animationSpec = tween(DurationScreen)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(DurationScreen)) { it } + fadeOut(animationSpec = tween(DurationScreen)))
                     }
                 },
                 label = "CambioModo"
@@ -120,11 +121,11 @@ fun PantallaInicio(
 }
 
 @Composable
-private fun HeaderInicio(nombreUsuario: String) {
+private fun HeaderInicio() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -144,25 +145,25 @@ private fun HeaderInicio(nombreUsuario: String) {
         
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(44.dp)
+                .shadow(8.dp, CircleShape, ambientColor = Color.Black.copy(0.05f))
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.5f))
-                .border(1.dp, GlassBorder, CircleShape)
-                .clickable { /* Opcional: navegar a perfil */ },
+                .background(Color.White)
+                .border(1.dp, GlassBorder, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Crossfade(targetState = UsuarioManager.fotoPerfilUri, label = "CrossfadeProfile") { uri ->
+            Crossfade(targetState = UsuarioManager.fotoPerfilUri, label = "HeaderProfile") { uri ->
                 if (uri != null) {
                     AsyncImage(
                         model = uri,
-                        contentDescription = "Foto de perfil",
+                        contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
                 } else {
                     Image(
                         painter = painterResource(id = R.drawable.perfil),
-                        contentDescription = "Foto de perfil",
+                        contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
@@ -181,10 +182,10 @@ private fun SelectorModo(
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .height(48.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(Color.White.copy(alpha = 0.3f))
-            .border(0.5.dp, GlassBorder, RoundedCornerShape(24.dp))
+            .height(52.dp)
+            .clip(RoundedCornerShape(26.dp))
+            .background(Color.White.copy(alpha = 0.4f))
+            .border(0.5.dp, GlassBorder, RoundedCornerShape(26.dp))
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ModoInicio.values().forEach { modo ->
@@ -193,19 +194,26 @@ private fun SelectorModo(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(24.dp))
-                        .background(if (seleccionado) AzulProfundo else Color.Transparent)
-                        .clickable { onModoSelected(modo) },
+                        .botonClickAnimado { onModoSelected(modo) },
                     contentAlignment = Alignment.Center
                 ) {
+                    if (seleccionado) {
+                        Box(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(AzulProfundo)
+                        )
+                    }
                     Text(
                         text = when(modo) {
                             ModoInicio.HOY -> "Hoy"
                             ModoInicio.SEMANA -> "Semana"
                             ModoInicio.EXPLORAR -> "Explorar"
                         },
-                        color = if (seleccionado) Color.White else TintaMarina,
-                        fontWeight = if (seleccionado) FontWeight.Bold else FontWeight.Normal,
+                        color = if (seleccionado) Color.White else TintaMarina.copy(0.6f),
+                        fontWeight = if (seleccionado) FontWeight.Bold else FontWeight.Medium,
                         fontSize = 14.sp
                     )
                 }
@@ -222,15 +230,11 @@ private fun ContenidoHoy(onClaseSeleccionada: (ClaseFitness) -> Unit) {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 100.dp)
+        contentPadding = PaddingValues(bottom = 120.dp)
     ) {
         if (claseProtagonista != null) {
             item {
                 ProtagonistCard(clase = claseProtagonista, onClick = { onClaseSeleccionada(claseProtagonista) })
-            }
-        } else {
-            item {
-                EmptyStateHoy()
             }
         }
 
@@ -240,7 +244,7 @@ private fun ContenidoHoy(onClaseSeleccionada: (ClaseFitness) -> Unit) {
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = TintaMarina,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp)
             )
         }
 
@@ -254,12 +258,12 @@ private fun ContenidoHoy(onClaseSeleccionada: (ClaseFitness) -> Unit) {
 private fun ProtagonistCard(clase: ClaseFitness, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .padding(horizontal = 24.dp, vertical = 8.dp)
+            .padding(horizontal = 24.dp, vertical = 12.dp)
             .fillMaxWidth()
-            .height(280.dp)
-            .shadow(12.dp, RoundedCornerShape(32.dp))
-            .clip(RoundedCornerShape(32.dp))
-            .clickable { onClick() }
+            .height(300.dp)
+            .shadow(16.dp, RoundedCornerShape(36.dp), ambientColor = Color.Black.copy(0.1f))
+            .clip(RoundedCornerShape(36.dp))
+            .botonClickAnimado(onClick)
     ) {
         Image(
             painter = painterResource(id = ImageUtils.getDrawableForNombre(clase.nombre, true, clase.imageKey)),
@@ -268,14 +272,15 @@ private fun ProtagonistCard(clase: ClaseFitness, onClick: () -> Unit) {
             modifier = Modifier.fillMaxSize()
         )
         
+        // Lámina flotante Glass
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
-                .background(Color.White.copy(alpha = 0.9f))
-                .padding(16.dp)
+                .clip(RoundedCornerShape(28.dp))
+                .background(Color.White.copy(alpha = 0.92f))
+                .padding(20.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -283,12 +288,12 @@ private fun ProtagonistCard(clase: ClaseFitness, onClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text(text = clase.nombre, fontWeight = FontWeight.Black, fontSize = 18.sp, color = TintaMarina)
+                    Text(text = clase.nombre, fontWeight = FontWeight.Black, fontSize = 20.sp, color = TintaMarina)
                     Text(text = "${clase.hora} · ${clase.sala}", color = TextoSecundario, fontSize = 14.sp)
                 }
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(44.dp)
                         .clip(CircleShape)
                         .background(LuzAqua),
                     contentAlignment = Alignment.Center
@@ -309,13 +314,14 @@ private fun ProtagonistCard(clase: ClaseFitness, onClick: () -> Unit) {
 private fun TarjetaClaseCompacta(clase: ClaseFitness, onClick: () -> Unit) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 24.dp, vertical = 6.dp)
+            .padding(horizontal = 24.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .shadow(4.dp, RoundedCornerShape(24.dp), ambientColor = Color.Black.copy(0.02f))
+            .clip(RoundedCornerShape(24.dp))
             .background(Color.White.copy(alpha = 0.5f))
-            .border(0.5.dp, GlassBorder, RoundedCornerShape(20.dp))
-            .clickable { onClick() }
-            .padding(12.dp),
+            .border(0.5.dp, GlassBorder, RoundedCornerShape(24.dp))
+            .botonClickAnimado(onClick)
+            .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -323,19 +329,19 @@ private fun TarjetaClaseCompacta(clase: ClaseFitness, onClick: () -> Unit) {
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(56.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .size(60.dp)
+                .clip(RoundedCornerShape(14.dp))
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = clase.nombre, fontWeight = FontWeight.Bold, color = TintaMarina)
+            Text(text = clase.nombre, fontWeight = FontWeight.Bold, color = TintaMarina, fontSize = 16.sp)
             Text(text = "${clase.hora} · ${clase.sala}", style = MaterialTheme.typography.bodySmall, color = TextoSecundario)
         }
         Text(
             text = "Ver",
             color = AzulProfundo,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(end = 8.dp)
+            fontWeight = FontWeight.Black,
+            fontSize = 14.sp
         )
     }
 }
@@ -359,23 +365,24 @@ private fun ContenidoSemana(
                 val seleccionado = diaNum == diaSeleccionado
                 Column(
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(70.dp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .width(54.dp)
+                        .height(80.dp)
+                        .shadow(if (seleccionado) 8.dp else 0.dp, RoundedCornerShape(18.dp), ambientColor = LuzAqua.copy(0.2f))
+                        .clip(RoundedCornerShape(18.dp))
                         .background(if (seleccionado) LuzAqua else Color.White.copy(alpha = 0.3f))
                         .clickable { onDiaSelected(diaNum) },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = dias[index], color = if (seleccionado) Color.White else TintaMarina, fontSize = 12.sp)
-                    Text(text = "${12 + index}", fontWeight = FontWeight.Bold, color = if (seleccionado) Color.White else TintaMarina)
+                    Text(text = dias[index], color = if (seleccionado) Color.White else TintaMarina, fontSize = 12.sp, fontWeight = if (seleccionado) FontWeight.Bold else FontWeight.Normal)
+                    Text(text = "${12 + index}", fontWeight = FontWeight.Black, color = if (seleccionado) Color.White else TintaMarina, fontSize = 18.sp)
                 }
             }
         }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 100.dp)
+            contentPadding = PaddingValues(bottom = 120.dp)
         ) {
             items(clasesDia) { clase ->
                 TarjetaClaseCompacta(clase = clase, onClick = { onClaseSeleccionada(clase) })
@@ -388,17 +395,12 @@ private fun ContenidoSemana(
 private fun ContenidoExplorar(onClaseSeleccionada: (ClaseFitness) -> Unit) {
     val filtros = listOf("Pilates", "Baile Fit", "Boxeo")
     var filtroActivo by rememberSaveable { mutableStateOf<String?>(null) }
-
-    val clasesFiltradas = if (filtroActivo == null) {
-        DatosClases.clases
-    } else {
-        DatosClases.clases.filter { it.nombre.contains(filtroActivo!!, ignoreCase = true) }
-    }
+    val clasesFiltradas = if (filtroActivo == null) DatosClases.clases else DatosClases.clases.filter { it.nombre.contains(filtroActivo!!, ignoreCase = true) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(filtros) { filtro ->
                 val seleccionado = filtro == filtroActivo
@@ -407,21 +409,17 @@ private fun ContenidoExplorar(onClaseSeleccionada: (ClaseFitness) -> Unit) {
                         .clip(CircleShape)
                         .background(if (seleccionado) AzulProfundo else Color.White.copy(alpha = 0.5f))
                         .border(0.5.dp, GlassBorder, CircleShape)
-                        .clickable { filtroActivo = if (seleccionado) null else filtro }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .botonClickAnimado { filtroActivo = if (seleccionado) null else filtro }
+                        .padding(horizontal = 18.dp, vertical = 10.dp)
                 ) {
-                    Text(
-                        text = filtro,
-                        color = if (seleccionado) Color.White else TintaMarina,
-                        fontSize = 12.sp
-                    )
+                    Text(text = filtro, color = if (seleccionado) Color.White else TintaMarina, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 100.dp)
+            contentPadding = PaddingValues(bottom = 120.dp)
         ) {
             items(clasesFiltradas) { clase ->
                 TarjetaClaseCompacta(clase = clase, onClick = { onClaseSeleccionada(clase) })
@@ -433,12 +431,10 @@ private fun ContenidoExplorar(onClaseSeleccionada: (ClaseFitness) -> Unit) {
 @Composable
 private fun EmptyStateHoy() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(40.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("No hay clases próximas", color = TintaMarina, fontWeight = FontWeight.Bold)
-        Text("Revisa la agenda semanal para planificar", color = TextoSecundario, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+        Text("No hay clases próximas", color = TintaMarina, fontWeight = FontWeight.Black, fontSize = 18.sp)
+        Text("Revisa la agenda semanal", color = TextoSecundario, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
     }
 }

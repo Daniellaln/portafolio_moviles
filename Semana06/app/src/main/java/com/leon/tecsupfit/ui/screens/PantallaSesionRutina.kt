@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,12 +49,14 @@ import androidx.compose.ui.unit.sp
 import com.leon.tecsupfit.data.DatosRutinas
 import com.leon.tecsupfit.data.Rutina
 import com.leon.tecsupfit.ui.components.LayoutBase
+import com.leon.tecsupfit.ui.components.botonClickAnimado
 import com.leon.tecsupfit.ui.theme.AzulProfundo
 import com.leon.tecsupfit.ui.theme.GlassBorder
 import com.leon.tecsupfit.ui.theme.LuzAqua
 import com.leon.tecsupfit.ui.theme.TintaMarina
 import com.leon.tecsupfit.ui.theme.TextoSecundario
 import kotlinx.coroutines.delay
+import java.util.Locale
 
 @Composable
 fun PantallaSesionRutina(
@@ -62,7 +64,6 @@ fun PantallaSesionRutina(
     onFinalizar: () -> Unit,
     onAbandonar: () -> Unit
 ) {
-    // Estado persistente para sobrevivir a recreaciones
     var currentIndex by rememberSaveable { mutableIntStateOf(0) }
     var currentLap by rememberSaveable { mutableIntStateOf(1) }
     var isTransition by rememberSaveable { mutableStateOf(false) }
@@ -73,29 +74,37 @@ fun PantallaSesionRutina(
     val ejercicioActual = rutina.ejercicios[currentIndex]
     val totalEjercicios = rutina.ejercicios.size
     
-    // Timer Effect
+    // Animar el progreso circular aqua suavemente
+    val targetProgress = if (isTransition) {
+        secondsRemaining.toFloat() / ejercicioActual.segundosTransicion
+    } else {
+        secondsRemaining.toFloat() / ejercicioActual.segundosActivos
+    }
+    
+    val animatedProgress by animateFloatAsState(
+        targetValue = targetProgress,
+        animationSpec = androidx.compose.animation.core.tween(durationMillis = 1000, easing = androidx.compose.animation.core.LinearEasing),
+        label = "AquaRingProgress"
+    )
+
     LaunchedEffect(isPaused, secondsRemaining, isTransition) {
         if (!isPaused && secondsRemaining > 0) {
             delay(1000L)
             secondsRemaining -= 1
         } else if (secondsRemaining == 0) {
             if (!isTransition) {
-                // Termina ejercicio, empieza transición
                 isTransition = true
                 secondsRemaining = ejercicioActual.segundosTransicion
             } else {
-                // Termina transición, siguiente ejercicio
                 isTransition = false
                 if (currentIndex < totalEjercicios - 1) {
                     currentIndex += 1
                     secondsRemaining = rutina.ejercicios[currentIndex].segundosActivos
                 } else if (currentLap < rutina.vueltas) {
-                    // Siguiente vuelta
                     currentLap += 1
                     currentIndex = 0
                     secondsRemaining = rutina.ejercicios[0].segundosActivos
                 } else {
-                    // Rutina completada
                     DatosRutinas.registrarSesion(rutina)
                     onFinalizar()
                 }
@@ -115,17 +124,16 @@ fun PantallaSesionRutina(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Header con salida
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { showExitDialog = true }) {
-                        Icon(Icons.Default.Close, contentDescription = "Salir", tint = TintaMarina)
+                        Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = TintaMarina)
                     }
                     Text(
-                        text = "Vuelta $currentLap de ${rutina.vueltas}",
+                        text = "Lap $currentLap / ${rutina.vueltas}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextoSecundario
@@ -135,38 +143,35 @@ fun PantallaSesionRutina(
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Nombre del ejercicio
                 Text(
-                    text = if (isTransition) "Prepárate" else ejercicioActual.nombre,
+                    text = if (isTransition) "Transición" else ejercicioActual.nombre,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Black,
-                    color = TintaMarina
+                    color = TintaMarina,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
                 
                 Spacer(modifier = Modifier.height(60.dp))
 
-                // Progreso Circular Aqua
+                // Anillo Aqua dinámico
                 Box(contentAlignment = Alignment.Center) {
-                    val progressMax = if (isTransition) ejercicioActual.segundosTransicion else ejercicioActual.segundosActivos
-                    val progress = secondsRemaining.toFloat() / progressMax
-                    
                     CircularProgressIndicator(
-                        progress = { progress },
-                        modifier = Modifier.size(240.dp),
+                        progress = { animatedProgress },
+                        modifier = Modifier.size(280.dp),
                         color = LuzAqua,
-                        strokeWidth = 12.dp,
-                        trackColor = Color.White.copy(0.3f),
+                        strokeWidth = 10.dp,
+                        trackColor = Color.White.copy(0.2f),
                     )
                     
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = formatTime(secondsRemaining),
-                            fontSize = 64.sp,
+                            fontSize = 72.sp,
                             fontWeight = FontWeight.Black,
                             color = TintaMarina
                         )
                         Text(
-                            text = if (isTransition) "Transición" else "Segundos",
+                            text = if (isTransition) "Prepárate" else "Sigue así",
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextoSecundario
                         )
@@ -175,31 +180,32 @@ fun PantallaSesionRutina(
 
                 Spacer(modifier = Modifier.height(60.dp))
 
-                // Próxima acción
-                if (!isTransition && (currentIndex < totalEjercicios - 1 || currentLap < rutina.vueltas)) {
-                    val nextEj = if (currentIndex < totalEjercicios - 1) rutina.ejercicios[currentIndex + 1] else rutina.ejercicios[0]
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "Siguiente:", style = MaterialTheme.typography.bodySmall, color = TextoSecundario)
-                        Text(text = nextEj.nombre, fontWeight = FontWeight.Bold, color = TintaMarina)
+                if (!isTransition) {
+                    val nextEj = if (currentIndex < totalEjercicios - 1) rutina.ejercicios[currentIndex + 1] else if (currentLap < rutina.vueltas) rutina.ejercicios[0] else null
+                    if (nextEj != null) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Siguiente:", style = MaterialTheme.typography.bodySmall, color = TextoSecundario)
+                            Text(text = nextEj.nombre, fontWeight = FontWeight.Bold, color = TintaMarina)
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Controles grandes
+                // Controles circulares flotantes
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Botón Pausar/Continuar
                     Box(
                         modifier = Modifier
                             .size(80.dp)
+                            .shadow(12.dp, CircleShape, ambientColor = AzulProfundo.copy(0.1f))
                             .clip(CircleShape)
-                            .background(if (isPaused) LuzAqua else Color.White.copy(0.5f))
+                            .background(if (isPaused) LuzAqua else Color.White.copy(0.6f))
                             .border(1.dp, GlassBorder, CircleShape)
-                            .clickable { isPaused = !isPaused },
+                            .botonClickAnimado { isPaused = !isPaused },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -212,14 +218,14 @@ fun PantallaSesionRutina(
                     
                     Spacer(modifier = Modifier.width(32.dp))
                     
-                    // Botón Saltar
                     Box(
                         modifier = Modifier
                             .size(60.dp)
+                            .shadow(8.dp, CircleShape)
                             .clip(CircleShape)
-                            .background(Color.White.copy(0.3f))
+                            .background(Color.White.copy(0.4f))
                             .border(1.dp, GlassBorder, CircleShape)
-                            .clickable { 
+                            .botonClickAnimado { 
                                 secondsRemaining = 0
                                 isPaused = false
                             },
@@ -228,13 +234,11 @@ fun PantallaSesionRutina(
                         Icon(
                             imageVector = Icons.Default.FastForward,
                             contentDescription = "Saltar",
-                            tint = AzulProfundo,
+                            tint = TintaMarina,
                             modifier = Modifier.size(24.dp)
                         )
                     }
                 }
-                
-                Spacer(modifier = Modifier.height(40.dp))
             }
         }
     }
@@ -242,19 +246,19 @@ fun PantallaSesionRutina(
     if (showExitDialog) {
         AlertDialog(
             onDismissRequest = { showExitDialog = false },
-            title = { Text("¿Abandonar sesión?") },
-            text = { Text("Tu progreso actual no se guardará en el historial si abandonas ahora.") },
+            title = { Text("¿Deseas salir?") },
+            text = { Text("El progreso de esta sesión no se guardará.") },
             confirmButton = {
                 TextButton(onClick = onAbandonar) {
-                    Text("Abandonar", color = Color.Red)
+                    Text("Abandonar", color = Color.Red, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showExitDialog = false }) {
-                    Text("Continuar", color = AzulProfundo)
+                    Text("Continuar", color = AzulProfundo, fontWeight = FontWeight.Bold)
                 }
             },
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(28.dp),
             containerColor = Color.White
         )
     }
@@ -263,5 +267,5 @@ fun PantallaSesionRutina(
 private fun formatTime(seconds: Int): String {
     val mins = seconds / 60
     val secs = seconds % 60
-    return String.format("%02d:%02d", mins, secs)
+    return String.format(Locale.getDefault(), "%02d:%02d", mins, secs)
 }
