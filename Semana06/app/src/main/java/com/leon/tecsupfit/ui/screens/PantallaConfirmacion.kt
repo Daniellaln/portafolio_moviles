@@ -1,134 +1,86 @@
 package com.leon.tecsupfit.ui.screens
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import com.leon.tecsupfit.data.ClaseFitness
-import com.leon.tecsupfit.ui.components.LayoutBase
-import com.leon.tecsupfit.ui.theme.AzulProfundo
-import com.leon.tecsupfit.ui.theme.GlassBorder
-import com.leon.tecsupfit.ui.theme.LuzAqua
-import com.leon.tecsupfit.ui.theme.TintaMarina
-import com.leon.tecsupfit.ui.theme.TextoSecundario
+import androidx.compose.ui.unit.*
+import com.leon.tecsupfit.data.*
+import com.leon.tecsupfit.ui.components.*
+import com.leon.tecsupfit.ui.theme.*
+
+@Composable
+fun SuccessMark() {
+    val reduced = LocalMovimientoReducido.current
+    val progress = remember { Animatable(if (reduced) 1f else 0f) }
+    LaunchedEffect(Unit) { if (!reduced) progress.animateTo(1f, tween(480)) }
+    Glass(
+        Modifier.size(116.dp).semantics { contentDescription = "Completado" },
+        radius = 60.dp,
+        elevation = 20.dp,
+    ) {
+        Canvas(Modifier.fillMaxSize().padding(31.dp)) {
+            drawCircle(LuzAqua.copy(alpha = .2f), radius = size.minDimension * .65f)
+            val p =
+                Path().apply {
+                    moveTo(size.width * .12f, size.height * .52f)
+                    lineTo(size.width * .4f, size.height * .78f)
+                    lineTo(size.width * .91f, size.height * .18f)
+                }
+            val measure = PathMeasure()
+            measure.setPath(p, false)
+            val shown = Path()
+            measure.getSegment(0f, measure.length * progress.value, shown, true)
+            drawPath(
+                shown,
+                Color(0xFF147D90),
+                style = Stroke(3.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round),
+            )
+        }
+    }
+}
 
 @Composable
 fun PantallaConfirmacion(
     clase: ClaseFitness,
-    onVerReservas: () -> Unit
+    foto: String?,
+    onProfile: () -> Unit,
+    ver: () -> Unit,
+    inicio: () -> Unit,
 ) {
-    val scale = remember { Animatable(0f) }
-
-    // El check de éxito se anima una sola vez (spring/bounce)
-    LaunchedEffect(Unit) {
-        scale.animateTo(
-            targetValue = 1f,
-            animationSpec = androidx.compose.animation.core.spring(
-                dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
-                stiffness = androidx.compose.animation.core.Spring.StiffnessLow
-            )
-        )
-    }
-
-    LayoutBase {
+    Page("Tu reserva", foto = foto, onProfile = onProfile, onBack = inicio) {
+        Spacer(Modifier.height(24.dp))
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { SuccessMark() }
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(9.dp),
         ) {
-            Box(
-                modifier = Modifier
-                    .padding(top = 80.dp)
-                    .size(120.dp)
-                    .scale(scale.value)
-                    .shadow(20.dp, CircleShape, ambientColor = LuzAqua.copy(alpha = 0.3f))
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .border(2.dp, GlassBorder, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = null,
-                    tint = LuzAqua,
-                    modifier = Modifier.size(64.dp)
-                )
-            }
-
-            Text(
-                text = "¡Cupo reservado!",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Black,
-                color = TintaMarina,
-                modifier = Modifier.padding(top = 32.dp)
-            )
-            
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(top = 12.dp)
-            ) {
+            Text("Reserva confirmada", style = MaterialTheme.typography.headlineMedium)
+            Text("Tu lugar ya está listo.", color = TextoSecundario)
+        }
+        Glass(Modifier.fillMaxWidth(), radius = 30.dp, elevation = 14.dp) {
+            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
-                    text = clase.nombre,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = TintaMarina,
-                    fontWeight = FontWeight.Bold
+                    clase.nombre.uppercase(),
+                    color = Color(0xFF216B7D),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
                 )
-                Text(
-                    text = "Hoy, ${clase.hora} · ${clase.sala}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextoSecundario
-                )
-            }
-
-            Box(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = onVerReservas,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp)
-                    .height(64.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White.copy(alpha = 0.8f),
-                    contentColor = TintaMarina
-                ),
-                shape = RoundedCornerShape(24.dp),
-                border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
-            ) {
-                Text(
-                    "Ver mis reservas",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Black
-                )
+                Text(fechaLarga(clase.inicio), style = MaterialTheme.typography.titleLarge)
+                HorizontalDivider(color = TextoSecundario.copy(alpha = .2f))
+                Text("${hora(clase.inicio)} – ${hora(clase.fin)}", fontWeight = FontWeight.SemiBold)
+                Text(clase.sala, color = TextoSecundario)
             }
         }
+        Spacer(Modifier.height(24.dp))
+        PrimaryButton("Ver mi reserva", onClick = ver)
+        SecondaryButton("Volver al inicio", inicio)
     }
 }

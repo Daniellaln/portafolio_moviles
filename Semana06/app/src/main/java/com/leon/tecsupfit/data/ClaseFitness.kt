@@ -1,17 +1,20 @@
 package com.leon.tecsupfit.data
 
-/**
- * Representa una clase del gimnasio que se puede reservar.
- */
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "clases")
 data class ClaseFitness(
-    val id: Int,
+    @PrimaryKey val id: String,
     val nombre: String,
-    val hora: String,
-    val sala: String,
+    val inicio: Long,
     val duracionMin: Int,
+    val sala: String,
     val descripcion: String,
-    val cuposDisponibles: Int,
     val cuposTotales: Int,
+    val ocupadosIniciales: Int = 0,
     val imageKey: String? = null,
-    val diaSemana: Int // 1 para Lunes, 7 para Domingo
-)
+) {
+    val fin: Long
+        get() = inicio + duracionMin * 60_000L
+}
