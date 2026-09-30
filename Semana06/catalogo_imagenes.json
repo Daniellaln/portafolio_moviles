@@ -1,0 +1,150 @@
+{
+  "version": 3,
+  "description": "Selección determinista local por tipo y nombre. Respetar imageKey explícito antes de aliases; normalizar tildes, mayúsculas y espacios; escoger primero la coincidencia más específica. Drawable se nombra sin .png en Android.",
+  "fallback": {
+    "clase": "foto_actividad_general",
+    "rutina": "foto_actividad_general"
+  },
+  "items": [
+    {
+      "type": "clase",
+      "key": "yoga",
+      "drawable": "foto_yoga_funcional",
+      "aliases": [
+        "yoga",
+        "yoga funcional",
+        "hatha",
+        "vinyasa"
+      ]
+    },
+    {
+      "type": "clase",
+      "key": "cross_training",
+      "drawable": "foto_cross_training",
+      "aliases": [
+        "cross training",
+        "crossfit",
+        "funcional",
+        "entrenamiento funcional",
+        "circuito"
+      ]
+    },
+    {
+      "type": "clase",
+      "key": "spinning",
+      "drawable": "foto_spinning",
+      "aliases": [
+        "spinning",
+        "ciclismo",
+        "bici",
+        "bicicleta",
+        "cycling",
+        "indoor bike"
+      ]
+    },
+    {
+      "type": "clase",
+      "key": "pilates",
+      "drawable": "foto_clase_pilates",
+      "aliases": [
+        "pilates",
+        "reformer"
+      ]
+    },
+    {
+      "type": "clase",
+      "key": "baile",
+      "drawable": "foto_clase_baile",
+      "aliases": [
+        "baile",
+        "baile fit",
+        "zumba",
+        "dance",
+        "ritmos"
+      ]
+    },
+    {
+      "type": "clase",
+      "key": "boxeo",
+      "drawable": "foto_clase_boxeo",
+      "aliases": [
+        "boxeo",
+        "boxing",
+        "kickboxing",
+        "box"
+      ]
+    },
+    {
+      "type": "rutina",
+      "key": "movilidad",
+      "drawable": "foto_rutina_movilidad",
+      "aliases": [
+        "movilidad",
+        "movilidad esencial",
+        "articulaciones"
+      ]
+    },
+    {
+      "type": "rutina",
+      "key": "fuerza",
+      "drawable": "foto_rutina_fuerza",
+      "aliases": [
+        "fuerza",
+        "pesas",
+        "mancuernas",
+        "musculacion",
+        "strength"
+      ]
+    },
+    {
+      "type": "rutina",
+      "key": "cardio",
+      "drawable": "foto_rutina_cardio",
+      "aliases": [
+        "cardio",
+        "aerobico",
+        "caminata",
+        "marcha",
+        "resistencia"
+      ]
+    },
+    {
+      "type": "rutina",
+      "key": "core",
+      "drawable": "foto_rutina_core",
+      "aliases": [
+        "core",
+        "abdominal",
+        "abdomen",
+        "estabilidad central"
+      ]
+    },
+    {
+      "type": "rutina",
+      "key": "estiramientos",
+      "drawable": "foto_rutina_estiramientos",
+      "aliases": [
+        "estiramiento",
+        "estiramientos",
+        "stretch",
+        "flexibilidad"
+      ]
+    },
+    {
+      "type": "rutina",
+      "key": "recuperacion",
+      "drawable": "foto_rutina_recuperacion",
+      "aliases": [
+        "recuperacion",
+        "descanso",
+        "respiracion",
+        "relajacion",
+        "cool down"
+      ]
+    }
+  ],
+  "other_drawables": {
+    "profile_default": "perfil",
+    "ambient_optional": "fondo_prisma"
+  }
+}
