@@ -2,6 +2,7 @@ package com.leon.tecsupfit.ui.screens
 
 import android.net.Uri
 import android.os.Environment
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,6 +56,7 @@ import coil.compose.AsyncImage
 import com.leon.tecsupfit.R
 import com.leon.tecsupfit.data.UsuarioManager
 import com.leon.tecsupfit.ui.components.LayoutBase
+import com.leon.tecsupfit.ui.components.botonClickAnimado
 import com.leon.tecsupfit.ui.theme.AzulProfundo
 import com.leon.tecsupfit.ui.theme.GlassBorder
 import com.leon.tecsupfit.ui.theme.LuzAqua
@@ -69,19 +71,27 @@ import java.util.Locale
 fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String) -> Unit) {
     val context = LocalContext.current
     var showPhotoSheet by remember { mutableStateOf(false) }
-    
-    // Camera Logic
     var tempPhotoUri by remember { mutableStateOf<Uri?>(null) }
     
+    // Si hay una hoja abierta, el retroceso del sistema la cierra
+    BackHandler(enabled = showPhotoSheet) {
+        showPhotoSheet = false
+    }
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri != null) {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-            UsuarioManager.guardarFoto(context, uri)
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+                UsuarioManager.guardarFoto(context, uri)
+            } catch (e: Exception) {
+                // Fallback si no se puede obtener permiso persistente
+                UsuarioManager.guardarFoto(context, uri)
+            }
             showPhotoSheet = false
         }
     }
@@ -114,7 +124,7 @@ fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // Avatar Circular
+                // Avatar Circular Táctil (TalkBack: "Foto de perfil, toca para cambiar")
                 Box(
                     modifier = Modifier
                         .padding(top = 32.dp)
@@ -123,25 +133,16 @@ fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String
                         .clip(CircleShape)
                         .background(Color.White)
                         .border(2.dp, GlassBorder, CircleShape)
-                        .clickable { showPhotoSheet = true },
+                        .botonClickAnimado { showPhotoSheet = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Crossfade(targetState = UsuarioManager.fotoPerfilUri, label = "ProfileImageDissolve") { uri ->
-                        if (uri != null) {
-                            AsyncImage(
-                                model = uri,
-                                contentDescription = "Foto de perfil",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.perfil),
-                                contentDescription = "Foto de perfil predeterminada",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                        AsyncImage(
+                            model = uri ?: R.drawable.perfil,
+                            contentDescription = "Foto de perfil",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
                     }
                 }
 
@@ -159,7 +160,7 @@ fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String
                     color = LuzAqua,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .clickable { showPhotoSheet = true }
+                        .botonClickAnimado { showPhotoSheet = true }
                         .padding(8.dp)
                 )
 
@@ -178,7 +179,7 @@ fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String
                 }
             }
 
-            // Hoja de Vidrio para Cambio de Foto (Mockup 14)
+            // Hoja de Vidrio para Cambio de Foto
             AnimatedVisibility(
                 visible = showPhotoSheet,
                 enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
@@ -195,9 +196,9 @@ fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                            .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                             .background(Color.White)
-                            .padding(24.dp)
+                            .padding(horizontal = 24.dp, vertical = 32.dp)
                             .clickable(enabled = false) { }
                     ) {
                         Text(
@@ -245,10 +246,10 @@ fun PantallaPerfil(nombreUsuario: String, rutaActual: String, onNavegar: (String
                             onClick = { showPhotoSheet = false },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(56.dp)
-                                .padding(top = 8.dp),
+                                .padding(top = 16.dp)
+                                .height(56.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = TextoSecundario),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(20.dp)
                         ) {
                             Text("Cancelar", fontWeight = FontWeight.Bold)
                         }
@@ -268,7 +269,7 @@ private fun AccionFoto(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(60.dp) // > 48dp
             .clickable { onClick() },
         contentAlignment = Alignment.CenterStart
     ) {
@@ -285,14 +286,14 @@ private fun AccionFoto(
 private fun EstadisticaCard(valor: String, etiqueta: String) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.6f)),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(28.dp),
         border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder),
-        modifier = Modifier.shadow(8.dp, RoundedCornerShape(24.dp), ambientColor = Color.Black.copy(0.05f))
+        modifier = Modifier.shadow(8.dp, RoundedCornerShape(28.dp), ambientColor = Color.Black.copy(0.05f))
     ) {
         Column(
             modifier = Modifier
                 .padding(24.dp)
-                .size(width = 80.dp, height = 60.dp),
+                .size(width = 86.dp, height = 64.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

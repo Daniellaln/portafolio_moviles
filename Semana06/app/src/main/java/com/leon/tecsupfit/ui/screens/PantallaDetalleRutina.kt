@@ -1,5 +1,7 @@
 package com.leon.tecsupfit.ui.screens
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +25,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leon.tecsupfit.data.Rutina
 import com.leon.tecsupfit.ui.components.BotonVolver
+import com.leon.tecsupfit.ui.components.DurationScreen
 import com.leon.tecsupfit.ui.components.ImageUtils
 import com.leon.tecsupfit.ui.components.LayoutBase
 import com.leon.tecsupfit.ui.components.botonClickAnimado
@@ -50,6 +58,17 @@ fun PantallaDetalleRutina(
     onVolver: () -> Unit,
     onEmpezar: () -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    val imageHeight by animateDpAsState(
+        targetValue = if (expanded) 340.dp else 260.dp,
+        animationSpec = tween(durationMillis = DurationScreen),
+        label = "ExpansionFotoRutina"
+    )
+
+    LaunchedEffect(Unit) {
+        expanded = true
+    }
+
     LayoutBase {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -57,16 +76,15 @@ fun PantallaDetalleRutina(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                // Imagen de cabecera
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(260.dp)
-                        .clip(RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp))
+                        .height(imageHeight)
+                        .clip(RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
                 ) {
                     Image(
                         painter = painterResource(id = ImageUtils.getDrawableForNombre(rutina.nombre, false, rutina.imageKey)),
-                        contentDescription = null,
+                        contentDescription = "Rutina ${rutina.nombre}",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -75,7 +93,7 @@ fun PantallaDetalleRutina(
 
                 Column(modifier = Modifier.padding(24.dp)) {
                     Text(
-                        text = "Rutina",
+                        text = "Plan de entrenamiento",
                         style = MaterialTheme.typography.bodyMedium,
                         color = LuzAqua,
                         fontWeight = FontWeight.Bold
@@ -99,26 +117,19 @@ fun PantallaDetalleRutina(
                     }
 
                     Text(
-                        text = "Descripción",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = TintaMarina,
-                        modifier = Modifier.padding(top = 32.dp)
-                    )
-                    Text(
                         text = rutina.descripcion,
                         style = MaterialTheme.typography.bodyLarge,
                         color = TextoSecundario,
-                        modifier = Modifier.padding(top = 8.dp),
-                        lineHeight = 24.sp
+                        modifier = Modifier.padding(top = 24.dp),
+                        lineHeight = 26.sp
                     )
 
                     Text(
-                        text = "Secuencia",
+                        text = "Secuencia de ejercicios",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TintaMarina,
-                        modifier = Modifier.padding(top = 32.dp)
+                        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
                     )
                     
                     rutina.ejercicios.forEachIndexed { index, ejercicio ->
@@ -128,11 +139,10 @@ fun PantallaDetalleRutina(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(120.dp))
+                    Spacer(modifier = Modifier.height(140.dp))
                 }
             }
 
-            // CTA Empezar
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -143,13 +153,13 @@ fun PantallaDetalleRutina(
                     onClick = onEmpezar,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp)
+                        .height(64.dp)
                         .botonClickAnimado(),
                     colors = ButtonDefaults.buttonColors(containerColor = AzulProfundo),
-                    shape = RoundedCornerShape(20.dp)
+                    shape = RoundedCornerShape(24.dp)
                 ) {
                     Text(
-                        text = "Empezar sesión",
+                        text = "Empezar entrenamiento",
                         color = Color.White,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold
@@ -166,24 +176,24 @@ private fun FilaEjercicio(num: Int, ejercicio: com.leon.tecsupfit.data.Ejercicio
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(0.4f))
-            .border(0.5.dp, GlassBorder, RoundedCornerShape(16.dp))
-            .padding(12.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color.White.copy(0.5f))
+            .border(0.5.dp, GlassBorder, RoundedCornerShape(20.dp))
+            .padding(16.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(36.dp)
                 .clip(CircleShape)
-                .background(LuzAqua.copy(0.1f)),
+                .background(LuzAqua.copy(0.15f)),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = num.toString(), color = LuzAqua, fontWeight = FontWeight.Bold)
+            Text(text = num.toString(), color = LuzAqua, fontWeight = FontWeight.Black)
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column {
-            Text(text = ejercicio.nombre, fontWeight = FontWeight.Bold, color = TintaMarina)
-            Text(text = "${ejercicio.segundosActivos} seg", style = MaterialTheme.typography.bodySmall, color = TextoSecundario)
+            Text(text = ejercicio.nombre, fontWeight = FontWeight.Bold, color = TintaMarina, fontSize = 16.sp)
+            Text(text = "${ejercicio.segundosActivos} segundos", style = MaterialTheme.typography.bodySmall, color = TextoSecundario)
         }
     }
 }
@@ -192,11 +202,11 @@ private fun FilaEjercicio(num: Int, ejercicio: com.leon.tecsupfit.data.Ejercicio
 private fun InfoCapsule(text: String) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.5f))
-            .border(0.5.dp, GlassBorder, RoundedCornerShape(12.dp))
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color.White.copy(alpha = 0.6f))
+            .border(0.5.dp, GlassBorder, RoundedCornerShape(14.dp))
+            .padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
-        Text(text = text, style = MaterialTheme.typography.bodySmall, color = TintaMarina)
+        Text(text = text, style = MaterialTheme.typography.bodySmall, color = TintaMarina, fontWeight = FontWeight.Bold)
     }
 }

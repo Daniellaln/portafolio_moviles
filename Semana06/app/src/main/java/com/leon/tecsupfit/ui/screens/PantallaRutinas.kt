@@ -46,8 +46,10 @@ import androidx.compose.ui.unit.sp
 import com.leon.tecsupfit.data.DatosRutinas
 import com.leon.tecsupfit.data.Intensidad
 import com.leon.tecsupfit.data.Rutina
+import com.leon.tecsupfit.ui.components.DurationFast
 import com.leon.tecsupfit.ui.components.ImageUtils
 import com.leon.tecsupfit.ui.components.LayoutBase
+import com.leon.tecsupfit.ui.components.botonClickAnimado
 import com.leon.tecsupfit.ui.theme.AzulProfundo
 import com.leon.tecsupfit.ui.theme.GlassBorder
 import com.leon.tecsupfit.ui.theme.LuzAqua
@@ -63,7 +65,6 @@ fun PantallaRutinas(
     var filtroDuracion by rememberSaveable { mutableStateOf<Int?>(null) }
     var filtroIntensidad by rememberSaveable { mutableStateOf<Intensidad?>(null) }
 
-    // Lógica de recomendación
     val rutinaEnCurso = DatosRutinas.rutinaEnCursoId?.let { DatosRutinas.obtenerRutinaPorId(it) }
     
     val protagonista = rutinaEnCurso ?: DatosRutinas.rutinas.find { 
@@ -94,43 +95,18 @@ fun PantallaRutinas(
                 modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp)
             )
 
-            // Chips de filtro (Mockup 13)
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                item {
-                    FiltroChip(
-                        text = "≤ 10 min",
-                        selected = filtroDuracion == 10,
-                        onClick = { filtroDuracion = if (filtroDuracion == 10) null else 10 }
-                    )
-                }
-                item {
-                    FiltroChip(
-                        text = "11-15 min",
-                        selected = filtroDuracion == 15,
-                        onClick = { filtroDuracion = if (filtroDuracion == 15) null else 15 }
-                    )
-                }
-                item {
-                    FiltroChip(
-                        text = "Baja",
-                        selected = filtroIntensidad == Intensidad.BAJA,
-                        onClick = { filtroIntensidad = if (filtroIntensidad == Intensidad.BAJA) null else Intensidad.BAJA }
-                    )
-                }
-                item {
-                    FiltroChip(
-                        text = "Media",
-                        selected = filtroIntensidad == Intensidad.MEDIA,
-                        onClick = { filtroIntensidad = if (filtroIntensidad == Intensidad.MEDIA) null else Intensidad.MEDIA }
-                    )
-                }
+                item { FiltroChip("≤ 10 min", filtroDuracion == 10) { filtroDuracion = if (filtroDuracion == 10) null else 10 } }
+                item { FiltroChip("11-15 min", filtroDuracion == 15) { filtroDuracion = if (filtroDuracion == 15) null else 15 } }
+                item { FiltroChip("Baja", filtroIntensidad == Intensidad.BAJA) { filtroIntensidad = if (filtroIntensidad == Intensidad.BAJA) null else Intensidad.BAJA } }
+                item { FiltroChip("Media", filtroIntensidad == Intensidad.MEDIA) { filtroIntensidad = if (filtroIntensidad == Intensidad.MEDIA) null else Intensidad.MEDIA } }
             }
 
             LazyColumn(
-                contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 100.dp),
+                contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 120.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
@@ -147,7 +123,7 @@ fun PantallaRutinas(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TintaMarina,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(top = 12.dp)
                     )
                 }
 
@@ -164,16 +140,16 @@ private fun FiltroChip(text: String, selected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clip(CircleShape)
-            .background(if (selected) AzulProfundo else Color.White.copy(alpha = 0.5f))
+            .background(if (selected) AzulProfundo else Color.White.copy(alpha = 0.45f))
             .border(0.5.dp, GlassBorder, CircleShape)
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .botonClickAnimado(onClick)
+            .padding(horizontal = 20.dp, vertical = 10.dp)
     ) {
         Text(
             text = text,
             color = if (selected) Color.White else TintaMarina,
-            fontSize = 12.sp,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -184,27 +160,25 @@ private fun RutinaProtagonista(rutina: Rutina, isContinuing: Boolean, onClick: (
         modifier = Modifier
             .fillMaxWidth()
             .height(260.dp)
-            .shadow(12.dp, RoundedCornerShape(32.dp))
+            .shadow(16.dp, RoundedCornerShape(32.dp), ambientColor = Color.Black.copy(0.08f))
             .clip(RoundedCornerShape(32.dp))
-            .clickable { onClick() }
+            .botonClickAnimado(onClick)
     ) {
         Image(
             painter = painterResource(id = ImageUtils.getDrawableForNombre(rutina.nombre, false, rutina.imageKey)),
-            contentDescription = null,
+            contentDescription = "Rutina ${rutina.nombre}",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
         
-        // Lámina de vidrio
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(24.dp))
-                .background(Color.White.copy(alpha = 0.9f))
-                .border(0.5.dp, GlassBorder, RoundedCornerShape(24.dp))
-                .padding(16.dp)
+                .background(Color.White.copy(alpha = 0.94f))
+                .padding(20.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -213,24 +187,24 @@ private fun RutinaProtagonista(rutina: Rutina, isContinuing: Boolean, onClick: (
             ) {
                 Column {
                     Text(
-                        text = if (isContinuing) "Continuar: ${rutina.nombre}" else "Sugerida: ${rutina.nombre}", 
+                        text = if (isContinuing) "Retomar: ${rutina.nombre}" else rutina.nombre, 
                         fontWeight = FontWeight.Black, 
-                        fontSize = 18.sp, 
+                        fontSize = 19.sp, 
                         color = TintaMarina
                     )
-                    Text(text = "${rutina.duracionTotalMin} min · ${rutina.intensidad}", color = TextoSecundario, fontSize = 14.sp)
+                    Text(text = "${rutina.duracionTotalMin} min · Intensidad ${rutina.intensidad}", color = TextoSecundario, fontSize = 14.sp)
                 }
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(44.dp)
                         .clip(CircleShape)
                         .background(if (isContinuing) LuzAqua else AzulProfundo),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(id = com.leon.tecsupfit.R.drawable.icon_play),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        contentDescription = "Iniciar",
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }
@@ -243,31 +217,36 @@ private fun TarjetaRutinaCompacta(rutina: Rutina, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.White.copy(alpha = 0.5f))
-            .border(0.5.dp, GlassBorder, RoundedCornerShape(20.dp))
-            .clickable { onClick() }
-            .padding(12.dp),
+            .clip(RoundedCornerShape(24.dp))
+            .background(Color.White.copy(alpha = 0.55f))
+            .border(0.5.dp, GlassBorder, RoundedCornerShape(24.dp))
+            .botonClickAnimado(onClick)
+            .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(id = ImageUtils.getDrawableForNombre(rutina.nombre, false, rutina.imageKey)),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = Modifier
                 .size(64.dp)
-                .clip(RoundedCornerShape(12.dp))
-        )
+                .clip(RoundedCornerShape(16.dp))
+        ) {
+            Image(
+                painter = painterResource(id = ImageUtils.getDrawableForNombre(rutina.nombre, false, rutina.imageKey)),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = rutina.nombre, fontWeight = FontWeight.Bold, color = TintaMarina)
+            Text(text = rutina.nombre, fontWeight = FontWeight.Bold, color = TintaMarina, fontSize = 16.sp)
             Text(text = "${rutina.duracionTotalMin} min · ${rutina.equipo}", style = MaterialTheme.typography.bodySmall, color = TextoSecundario)
         }
         Text(
             text = "Ver",
             color = AzulProfundo,
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp
+            fontWeight = FontWeight.Black,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(end = 4.dp)
         )
     }
 }

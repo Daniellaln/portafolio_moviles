@@ -8,7 +8,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,8 +48,10 @@ import com.leon.tecsupfit.data.DatosClases
 import com.leon.tecsupfit.data.EstadoReserva
 import com.leon.tecsupfit.data.Reserva
 import com.leon.tecsupfit.navigation.Pantallas
+import com.leon.tecsupfit.ui.components.DurationFast
 import com.leon.tecsupfit.ui.components.ImageUtils
 import com.leon.tecsupfit.ui.components.LayoutBase
+import com.leon.tecsupfit.ui.components.botonClickAnimado
 import com.leon.tecsupfit.ui.theme.AzulProfundo
 import com.leon.tecsupfit.ui.theme.GlassBorder
 import com.leon.tecsupfit.ui.theme.LuzAqua
@@ -79,7 +80,7 @@ fun PantallaReservas(
                 modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp)
             )
 
-            // Selector Proximas / Historial
+            // Tabs con mayor área de toque y contraste
             Row(
                 modifier = Modifier
                     .padding(horizontal = 24.dp, vertical = 16.dp)
@@ -103,7 +104,7 @@ fun PantallaReservas(
             AnimatedContent(
                 targetState = modoSeleccionado,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(230)) togetherWith fadeOut(animationSpec = tween(230))
+                    fadeIn(animationSpec = tween(DurationFast)) togetherWith fadeOut(animationSpec = tween(DurationFast))
                 },
                 label = "CambioTabReservas"
             ) { modo ->
@@ -130,17 +131,17 @@ private fun TabReservas(
 ) {
     Box(
         modifier = modifier
-            .height(40.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .height(48.dp) // Accesibilidad: >= 48dp
+            .clip(RoundedCornerShape(24.dp))
             .background(if (selected) AzulProfundo else Color.White.copy(alpha = 0.3f))
-            .border(0.5.dp, GlassBorder, RoundedCornerShape(20.dp))
-            .clickable { onClick() },
+            .border(0.5.dp, GlassBorder, RoundedCornerShape(24.dp))
+            .botonClickAnimado(onClick),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             color = if (selected) Color.White else TintaMarina,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
             fontSize = 14.sp
         )
     }
@@ -152,7 +153,7 @@ private fun ListaProximas(onExplorar: () -> Unit, onClaseClick: (ClaseFitness) -
     
     if (proximas.isEmpty()) {
         EmptyStateReservas(
-            mensaje = "No tienes reservas activas",
+            mensaje = "No tienes clases reservadas",
             onAction = onExplorar
         )
     } else {
@@ -160,15 +161,21 @@ private fun ListaProximas(onExplorar: () -> Unit, onClaseClick: (ClaseFitness) -
         val resto = proximas.drop(1)
 
         LazyColumn(
-            contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 100.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 120.dp), // Espacio para dock
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
                 ReservaProtagonista(reserva = protagonista, onClick = { onClaseClick(protagonista.clase) })
             }
             if (resto.isNotEmpty()) {
                 item {
-                    Text(text = "Otras reservas", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = TintaMarina)
+                    Text(
+                        text = "Otras reservas", 
+                        style = MaterialTheme.typography.titleMedium, 
+                        fontWeight = FontWeight.Bold, 
+                        color = TintaMarina,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
                 }
                 items(resto) { reserva ->
                     TarjetaReservaCompacta(reserva = reserva, onClick = { onClaseClick(reserva.clase) })
@@ -181,18 +188,16 @@ private fun ListaProximas(onExplorar: () -> Unit, onClaseClick: (ClaseFitness) -
 @Composable
 private fun ListaHistorial(onClaseClick: (ClaseFitness) -> Unit) {
     val historial = DatosClases.reservas.filter { 
-        it.estado == EstadoReserva.COMPLETADA || 
-        it.estado == EstadoReserva.CANCELADA || 
-        it.estado == EstadoReserva.FINALIZADA 
-    }
+        it.estado != EstadoReserva.CONFIRMADA
+    }.sortedByDescending { it.timestamp }
 
     if (historial.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Historial vacío", color = TextoSecundario)
+            Text(text = "Historial vacío", color = TextoSecundario, fontWeight = FontWeight.Medium)
         }
     } else {
         LazyColumn(
-            contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 100.dp),
+            contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(historial) { reserva ->
@@ -207,42 +212,42 @@ private fun ReservaProtagonista(reserva: Reserva, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .shadow(12.dp, RoundedCornerShape(24.dp))
-            .clip(RoundedCornerShape(24.dp))
-            .clickable { onClick() }
+            .height(240.dp)
+            .shadow(16.dp, RoundedCornerShape(32.dp), ambientColor = Color.Black.copy(0.1f))
+            .clip(RoundedCornerShape(32.dp))
+            .botonClickAnimado(onClick)
     ) {
         Image(
             painter = painterResource(id = ImageUtils.getDrawableForNombre(reserva.clase.nombre, true, reserva.clase.imageKey)),
-            contentDescription = null,
+            contentDescription = "Clase ${reserva.clase.nombre}",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
         
-        // Estado en vidrio
+        // Estado en vidrio dinámico
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(16.dp)
+                .padding(20.dp)
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.8f))
+                .background(Color.White.copy(alpha = 0.85f))
                 .border(0.5.dp, GlassBorder, CircleShape)
-                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .padding(horizontal = 14.dp, vertical = 6.dp)
         ) {
-            Text(text = "Confirmada", color = LuzAqua, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+            Text(text = "Confirmada", color = LuzAqua, fontWeight = FontWeight.Black, fontSize = 12.sp)
         }
 
-        // Info lamina
+        // Lámina informativa inferior
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .background(Color.Black.copy(alpha = 0.4f))
-                .padding(16.dp)
+                .background(Color.Black.copy(alpha = 0.5f))
+                .padding(20.dp)
         ) {
             Column {
-                Text(text = reserva.clase.nombre, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                Text(text = reserva.fecha, color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
+                Text(text = reserva.clase.nombre, color = Color.White, fontWeight = FontWeight.Black, fontSize = 18.sp)
+                Text(text = "${reserva.fecha} · ${reserva.clase.sala}", color = Color.White.copy(alpha = 0.85f), fontSize = 14.sp)
             }
         }
     }
@@ -253,19 +258,17 @@ private fun TarjetaReservaCompacta(reserva: Reserva, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.5f))
-            .border(0.5.dp, GlassBorder, RoundedCornerShape(16.dp))
-            .clickable { onClick() }
-            .padding(12.dp),
+            .clip(RoundedCornerShape(24.dp))
+            .background(Color.White.copy(alpha = 0.55f))
+            .border(0.5.dp, GlassBorder, RoundedCornerShape(24.dp))
+            .botonClickAnimado(onClick)
+            .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(if (reserva.estado == EstadoReserva.CANCELADA) Color.Red.copy(0.1f) else LuzAqua.copy(0.1f)),
-            contentAlignment = Alignment.Center
+                .size(52.dp)
+                .clip(RoundedCornerShape(14.dp))
         ) {
             Image(
                 painter = painterResource(id = ImageUtils.getDrawableForNombre(reserva.clase.nombre, true, reserva.clase.imageKey)),
@@ -274,24 +277,24 @@ private fun TarjetaReservaCompacta(reserva: Reserva, onClick: () -> Unit) {
                 modifier = Modifier.fillMaxSize()
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = reserva.clase.nombre, fontWeight = FontWeight.Bold, color = TintaMarina, fontSize = 14.sp)
-            Text(text = reserva.fecha, color = TextoSecundario, fontSize = 12.sp)
+            Text(text = reserva.clase.nombre, fontWeight = FontWeight.Bold, color = TintaMarina, fontSize = 15.sp)
+            Text(text = reserva.fecha, color = TextoSecundario, fontSize = 13.sp)
         }
         Text(
             text = when(reserva.estado) {
                 EstadoReserva.CONFIRMADA -> "Activa"
                 EstadoReserva.COMPLETADA -> "Hecha"
                 EstadoReserva.CANCELADA -> "Cancelada"
-                EstadoReserva.FINALIZADA -> "Finalizada"
+                EstadoReserva.FINALIZADA -> "Pasada"
             },
             color = when(reserva.estado) {
                 EstadoReserva.CONFIRMADA -> LuzAqua
-                EstadoReserva.CANCELADA -> Color.Red
+                EstadoReserva.CANCELADA -> Color.Red.copy(0.8f)
                 else -> TextoSecundario
             },
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Black,
             fontSize = 12.sp
         )
     }
@@ -306,14 +309,15 @@ private fun EmptyStateReservas(mensaje: String, onAction: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = mensaje, color = TintaMarina, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = mensaje, color = TintaMarina, fontWeight = FontWeight.Black, fontSize = 18.sp)
+        Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = onAction,
+            modifier = Modifier.height(56.dp).padding(horizontal = 16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = AzulProfundo),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(20.dp)
         ) {
-            Text("Explorar clases")
+            Text("Explorar clases disponibles", fontWeight = FontWeight.Bold)
         }
     }
 }
