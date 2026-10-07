@@ -94,7 +94,7 @@ private fun BotonCirculo(
         }
         Icon(
             imageVector = icono,
-            contentDescription = null,
+            contentDescription = if (icono == Icons.Default.Add) "Aumentar cantidad" else "Disminuir cantidad",
             tint = colorIcono,
             modifier = Modifier.size(18.dp)
         )

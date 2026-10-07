@@ -80,7 +80,7 @@ fun ClienteApp() {
                     navController.navigate(Rutas.detalle(producto.id))
                 },
                 onAgregarProducto = { producto ->
-                    carrito = agregarOSumarProducto(carrito, producto, 1)
+                    carrito = com.tecsup.mibodega.ui.cliente.modelo.agregarProducto(carrito, producto, 1)
                 }
             )
         }
@@ -102,7 +102,7 @@ fun ClienteApp() {
                 producto = producto,
                 onVolver = { navController.popBackStack() },
                 onAgregarAlCarrito = { productoSeleccionado, cantidad ->
-                    carrito = agregarOSumarProducto(carrito, productoSeleccionado, cantidad)
+                    carrito = com.tecsup.mibodega.ui.cliente.modelo.agregarProducto(carrito, productoSeleccionado, cantidad)
                     navController.navigate(Rutas.CARRITO) { popUpTo(Rutas.INICIO); launchSingleTop = true }
                 }
             )
@@ -135,21 +135,3 @@ fun ClienteApp() {
     }
 }
 
-/**
- * Si el producto ya está en el carrito, le suma la cantidad;
- * si no, lo agrega como un ItemCarrito nuevo.
- */
-private fun agregarOSumarProducto(
-    carrito: List<ItemCarrito>,
-    producto: Producto,
-    cantidad: Int
-): List<ItemCarrito> {
-    val itemExistente = carrito.find { it.producto.id == producto.id }
-    return if (itemExistente != null) {
-        carrito.map {
-            if (it.producto.id == producto.id) it.copy(cantidad = it.cantidad + cantidad) else it
-        }
-    } else {
-        carrito + ItemCarrito(producto = producto, cantidad = cantidad)
-    }
-}

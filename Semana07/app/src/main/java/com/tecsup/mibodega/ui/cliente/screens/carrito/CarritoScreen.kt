@@ -41,7 +41,7 @@ import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
-private const val COSTO_DELIVERY = 4.00
+import com.tecsup.mibodega.ui.cliente.modelo.*
 
 /**
  * Pantalla 5: Mi carrito (mockup "Cliente").
@@ -57,8 +57,8 @@ fun CarritoScreen(
     onEliminar: (Producto) -> Unit,
     onContinuarPedido: () -> Unit
 ) {
-    val subtotal = carrito.sumOf { it.producto.precio * it.cantidad }
-    val total = subtotal + COSTO_DELIVERY
+    val subtotal = subtotalCarrito(carrito)
+    val total = totalCarrito(carrito)
 
     Column(
         modifier = Modifier
@@ -73,6 +73,7 @@ fun CarritoScreen(
                 .padding(horizontal = 20.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
+            if (carrito.isEmpty()) item { Text("Tu carrito está vacío. Agrega productos desde Inicio.", modifier = Modifier.padding(vertical = 24.dp)) }
             items(carrito, key = { it.producto.id }) { item ->
                 FilaCarrito(
                     item = item,
@@ -86,9 +87,10 @@ fun CarritoScreen(
 
         ResumenYBoton(
             subtotal = subtotal,
-            delivery = COSTO_DELIVERY,
+            delivery = deliveryCarrito(carrito),
             total = total,
-            onContinuarPedido = onContinuarPedido
+            onContinuarPedido = { if (carrito.isNotEmpty()) onContinuarPedido() },
+            habilitado = carrito.isNotEmpty()
         )
     }
 }
@@ -149,7 +151,7 @@ private fun FilaCarrito(
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "S/ %.2f".format(item.producto.precio),
+                text = "S/ %.2f".format(java.util.Locale.US, item.producto.precio),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -158,7 +160,8 @@ private fun FilaCarrito(
         SelectorCantidad(
             cantidad = item.cantidad,
             onIncrementar = onIncrementar,
-            onDecrementar = onDecrementar
+            onDecrementar = onDecrementar,
+            minimo = 0
         )
 
         IconButton(onClick = onEliminar) {
@@ -176,7 +179,8 @@ private fun ResumenYBoton(
     subtotal: Double,
     delivery: Double,
     total: Double,
-    onContinuarPedido: () -> Unit
+    onContinuarPedido: () -> Unit,
+    habilitado: Boolean
 ) {
     Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
         FilaResumen(etiqueta = "Subtotal", valor = subtotal)
@@ -193,7 +197,7 @@ private fun ResumenYBoton(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "S/ %.2f".format(total),
+                text = "S/ %.2f".format(java.util.Locale.US, total),
                 style = MaterialTheme.typography.titleMedium,
                 color = VerdeBodega
             )
@@ -203,6 +207,7 @@ private fun ResumenYBoton(
 
         BotonPrimario(
             texto = "Continuar pedido",
+            habilitado = habilitado,
             onClick = onContinuarPedido
         )
     }
@@ -217,7 +222,7 @@ private fun FilaResumen(etiqueta: String, valor: Double) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = etiqueta, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(text = "S/ %.2f".format(valor), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(text = "S/ %.2f".format(java.util.Locale.US, valor), color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
