@@ -2,7 +2,7 @@ package com.tecsup.mibodega.ui.componentes
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,11 +27,11 @@ fun BotonSecundario(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp),
-        shape = RoundedCornerShape(14.dp),
+            .heightIn(min = 56.dp).clay(radio = 22f),
+        shape = RoundedCornerShape(18.dp),
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = androidx.compose.ui.graphics.Color.Transparent,
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
