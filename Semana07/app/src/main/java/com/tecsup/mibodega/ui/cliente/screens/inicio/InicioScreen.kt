@@ -66,8 +66,11 @@ fun InicioScreen(
     cantidadCarrito: Int,
     onVerCarrito: () -> Unit,
     onProductoClick: (Producto) -> Unit,
-    onAgregarProducto: (Producto) -> Unit
+    onAgregarProducto: (Producto) -> Unit,
+    cliente: com.tecsup.mibodega.ui.cliente.modelo.DatosCliente = com.tecsup.mibodega.ui.cliente.modelo.DatosCliente(),
+    pedidos: List<com.tecsup.mibodega.ui.cliente.modelo.Pedido> = emptyList()
 ) {
+    var destino by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(0) }
     var categoriaSeleccionada by remember { mutableStateOf(listaCategorias.first()) }
 
 
@@ -96,7 +99,7 @@ fun InicioScreen(
                 }
             )
         },
-        bottomBar = { BarraInferior() }
+        bottomBar = { BarraInferior(destino) { destino = it } }
     ) { paddingInterno ->
         Column(
             modifier = Modifier
@@ -104,6 +107,27 @@ fun InicioScreen(
                 .padding(paddingInterno)
                 .padding(horizontal = 16.dp)
         ) {
+            if (destino == 2) {
+                Text("Mis pedidos", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(vertical = 16.dp))
+                LazyColumn {
+                    if (pedidos.isEmpty()) item { Text("Aún no tienes pedidos.") }
+                    items(pedidos, key = { it.numero }) { pedido ->
+                        Text("Pedido #${pedido.numero} · S/ %.2f".format(java.util.Locale.US, pedido.total), modifier = Modifier.padding(vertical = 12.dp))
+                        Text("${pedido.cliente.direccion} · ${pedido.metodoPago} · En preparación")
+                    }
+                }
+                return@Column
+            }
+            if (destino == 3) {
+                Text("Mi perfil", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(vertical = 16.dp))
+                Text(cliente.nombre.ifBlank { "Cliente de demostración" })
+                Text(cliente.telefono)
+                Text(cliente.direccion)
+                Text(cliente.referencia)
+                Text("Datos guardados en memoria durante esta sesión.", modifier = Modifier.padding(top = 20.dp))
+                return@Column
+            }
+            if (destino == 1) Text("Categorías", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
@@ -183,8 +207,7 @@ private fun ChipCategoria(
 }
 
 @Composable
-private fun BarraInferior() {
-    var seleccionado by remember { mutableStateOf(0) }
+private fun BarraInferior(seleccionado: Int, onSeleccionar: (Int) -> Unit) {
     val items = listOf(
         Triple("Inicio", Icons.Default.Home, 0),
         Triple("Categorías", Icons.Default.List, 1),
@@ -195,7 +218,7 @@ private fun BarraInferior() {
         items.forEach { (etiqueta, icono, indice) ->
             NavigationBarItem(
                 selected = seleccionado == indice,
-                onClick = { seleccionado = indice },
+                onClick = { onSeleccionar(indice) },
                 icon = { Icon(icono, contentDescription = etiqueta) },
                 label = { Text(etiqueta) },
                 colors = androidx.compose.material3.NavigationBarItemDefaults.colors(

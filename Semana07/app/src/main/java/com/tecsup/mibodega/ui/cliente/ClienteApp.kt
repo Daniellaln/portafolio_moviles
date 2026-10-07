@@ -41,6 +41,8 @@ fun ClienteApp() {
         )
     }
 
+    var cliente by remember { mutableStateOf(com.tecsup.mibodega.ui.cliente.modelo.DatosCliente()) }
+    var pedidos by remember { mutableStateOf<List<com.tecsup.mibodega.ui.cliente.modelo.Pedido>>(emptyList()) }
     // El carrito vive aquí arriba, no en ninguna Screen.
     var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
 
@@ -60,7 +62,7 @@ fun ClienteApp() {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
                 onCrearCuenta = { nombre, telefono, direccion, referencia ->
-                    // Registro local de demostración; no usa servidor.
+                    cliente = com.tecsup.mibodega.ui.cliente.modelo.DatosCliente(nombre, telefono, direccion, referencia)
                     navController.navigate(Rutas.INICIO) {
                         popUpTo(Rutas.BIENVENIDA) { inclusive = true }
                     }
@@ -71,6 +73,8 @@ fun ClienteApp() {
         composable(Rutas.INICIO) {
             InicioScreen(
                 cantidadCarrito = carrito.sumOf { it.cantidad },
+                cliente = cliente,
+                pedidos = pedidos,
                 onVerCarrito = { navController.navigate(Rutas.CARRITO) },
                 onProductoClick = { producto ->
                     navController.navigate(Rutas.detalle(producto.id))
