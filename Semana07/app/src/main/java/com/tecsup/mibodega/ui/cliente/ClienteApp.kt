@@ -27,19 +27,19 @@ import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
  * Ninguna Screen navega sola ni modifica el carrito directamente:
  * todas reciben funciones (lambdas) desde aquí (state hoisting).
  */
-private object Rutas {
-    const val BIENVENIDA = "bienvenida"
-    const val REGISTRO = "registro"
-    const val INICIO = "inicio"
-    const val DETALLE = "detalle/{productoId}"
-    const val CARRITO = "carrito"
-
-    fun detalle(productoId: Int) = "detalle/$productoId"
-}
 
 @Composable
 fun ClienteApp() {
     val navController = rememberNavController()
+    var mostrarTerminos by remember { mutableStateOf(false) }
+    if (mostrarTerminos) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { mostrarTerminos = false },
+            title = { androidx.compose.material3.Text("Términos y condiciones") },
+            text = { androidx.compose.material3.Text("Aplicación académica de demostración. No procesa pagos reales. Los datos se guardan únicamente en memoria durante esta sesión.") },
+            confirmButton = { androidx.compose.material3.TextButton(onClick = { mostrarTerminos = false }) { androidx.compose.material3.Text("Aceptar") } }
+        )
+    }
 
     // El carrito vive aquí arriba, no en ninguna Screen.
     var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
@@ -51,8 +51,8 @@ fun ClienteApp() {
         composable(Rutas.BIENVENIDA) {
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
-                onIniciarSesion = { /* TODO: pantalla de login, aún no está en el mockup */ },
-                onTerminos = { /* TODO: abrir términos y condiciones */ }
+                onIniciarSesion = { navController.navigate(Rutas.INICIO) { popUpTo(Rutas.BIENVENIDA) { inclusive = true } } },
+                onTerminos = { mostrarTerminos = true }
             )
         }
 
@@ -60,7 +60,7 @@ fun ClienteApp() {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
                 onCrearCuenta = { nombre, telefono, direccion, referencia ->
-                    // TODO: guardar estos datos cuando exista el registro real
+                    // Registro local de demostración; no usa servidor.
                     navController.navigate(Rutas.INICIO) {
                         popUpTo(Rutas.BIENVENIDA) { inclusive = true }
                     }
@@ -86,8 +86,14 @@ fun ClienteApp() {
             arguments = listOf(navArgument("productoId") { type = NavType.IntType })
         ) { backStackEntry ->
             val productoId = backStackEntry.arguments?.getInt("productoId") ?: 0
-            val producto = listaProductosFake.first { it.id == productoId }
+            val producto = listaProductosFake.firstOrNull { it.id == productoId }
 
+            if (producto == null) {
+                androidx.compose.material3.TextButton(onClick = { navController.popBackStack() }) {
+                    androidx.compose.material3.Text("Producto no encontrado. Volver")
+                }
+                return@composable
+            }
             DetalleProductoScreen(
                 producto = producto,
                 onVolver = { navController.popBackStack() },
