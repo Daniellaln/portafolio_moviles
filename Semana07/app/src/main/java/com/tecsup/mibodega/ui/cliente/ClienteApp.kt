@@ -108,6 +108,30 @@ fun ClienteApp() {
             )
         }
 
+        composable(Rutas.ENTREGA) {
+            com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen(
+                cliente = cliente,
+                total = com.tecsup.mibodega.ui.cliente.modelo.totalCarrito(carrito),
+                onVolver = { navController.popBackStack() },
+                onConfirmar = { datos, pago ->
+                    if (carrito.isNotEmpty()) {
+                        cliente = datos
+                        val pedido = com.tecsup.mibodega.ui.cliente.modelo.Pedido(1024 + pedidos.size, datos, pago, carrito.toList(), com.tecsup.mibodega.ui.cliente.modelo.totalCarrito(carrito))
+                        pedidos = pedidos + pedido
+                        carrito = emptyList()
+                        navController.navigate(Rutas.CONFIRMACION) {
+                            popUpTo(Rutas.INICIO) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            )
+        }
+        composable(Rutas.CONFIRMACION) {
+            com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen(pedidos.lastOrNull()) {
+                navController.popBackStack(Rutas.INICIO, false)
+            }
+        }
         composable(Rutas.CARRITO) {
             CarritoScreen(
                 carrito = carrito,
@@ -129,7 +153,7 @@ fun ClienteApp() {
                 onEliminar = { producto ->
                     carrito = carrito.filterNot { it.producto.id == producto.id }
                 },
-                onContinuarPedido = { /* TODO: navegar a DatosEntregaScreen */ }
+                onContinuarPedido = { if (carrito.isNotEmpty()) navController.navigate(Rutas.ENTREGA) { launchSingleTop = true } }
             )
         }
     }
