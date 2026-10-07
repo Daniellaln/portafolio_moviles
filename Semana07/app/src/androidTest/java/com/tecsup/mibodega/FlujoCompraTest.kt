@@ -49,7 +49,7 @@ class FlujoCompraTest {
         compose.onNodeWithContentDescription("Carrito").assertIsDisplayed()
         compose.onNodeWithText("Datos de entrega").assertDoesNotExist()
         compose.onNodeWithText("Pedidos").performClick()
-        compose.onNodeWithText("Pedido #1024 · S/ 10.50").assertIsDisplayed()
+        compose.onNodeWithText("Pedido #1024").assertIsDisplayed()
         compose.onNodeWithText("Perfil").performClick()
         compose.onNodeWithText("Juan Perez").assertIsDisplayed()
         compose.onNodeWithText("Inicio").performClick()

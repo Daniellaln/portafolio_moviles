@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import com.tecsup.mibodega.ui.cliente.modelo.*
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -41,10 +43,10 @@ fun ClienteApp() {
         )
     }
 
-    var cliente by remember { mutableStateOf(com.tecsup.mibodega.ui.cliente.modelo.DatosCliente()) }
-    var pedidos by remember { mutableStateOf<List<com.tecsup.mibodega.ui.cliente.modelo.Pedido>>(emptyList()) }
+    var cliente by rememberSaveable(stateSaver = clienteSaver) { mutableStateOf(com.tecsup.mibodega.ui.cliente.modelo.DatosCliente()) }
+    var pedidos by rememberSaveable(stateSaver = pedidosSaver) { mutableStateOf<List<com.tecsup.mibodega.ui.cliente.modelo.Pedido>>(emptyList()) }
     // El carrito vive aquí arriba, no en ninguna Screen.
-    var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
+    var carrito by rememberSaveable(stateSaver = carritoSaver) { mutableStateOf<List<ItemCarrito>>(emptyList()) }
 
     NavHost(
         navController = navController,
@@ -75,7 +77,7 @@ fun ClienteApp() {
                 cantidadCarrito = carrito.sumOf { it.cantidad },
                 cliente = cliente,
                 pedidos = pedidos,
-                onVerCarrito = { navController.navigate(Rutas.CARRITO) },
+                onVerCarrito = { navController.navigate(Rutas.CARRITO) { launchSingleTop = true } },
                 onProductoClick = { producto ->
                     navController.navigate(Rutas.detalle(producto.id))
                 },
