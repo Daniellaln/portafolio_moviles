@@ -71,7 +71,7 @@ fun InicioScreen(
     pedidos: List<com.tecsup.mibodega.ui.cliente.modelo.Pedido> = emptyList()
 ) {
     var destino by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(0) }
-    var categoriaSeleccionada by remember { mutableStateOf(listaCategorias.first()) }
+    var categoriaSeleccionada by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(listaCategorias.first()) }
 
 
     val productosFiltrados = productos.filter { producto ->
@@ -148,7 +148,7 @@ fun InicioScreen(
             )
 
             Text(
-                text = "Productos destacados",
+                text = if (categoriaSeleccionada == "Todos") "Productos destacados" else categoriaSeleccionada,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 20.dp, bottom = 4.dp)
             )

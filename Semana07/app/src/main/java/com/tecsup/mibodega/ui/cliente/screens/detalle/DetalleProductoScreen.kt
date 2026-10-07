@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.ShoppingBasket
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,7 +54,7 @@ fun DetalleProductoScreen(
     onVolver: () -> Unit,
     onAgregarAlCarrito: (Producto, Int) -> Unit
 ) {
-    var cantidad by remember { mutableStateOf(1) }
+    var cantidad by androidx.compose.runtime.saveable.rememberSaveable(producto.id) { mutableStateOf(1) }
 
     Column(
         modifier = Modifier
@@ -79,7 +80,7 @@ fun DetalleProductoScreen(
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "S/ %.2f".format(producto.precio),
+                text = "S/ %.2f".format(java.util.Locale.US, producto.precio),
                 style = MaterialTheme.typography.displayMedium.copy(fontSize = 26.sp),
                 color = RojoPrecio
             )
@@ -114,6 +115,7 @@ fun DetalleProductoScreen(
 
 @Composable
 private fun EncabezadoDetalle(onVolver: () -> Unit) {
+    var favorito by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,8 +126,8 @@ private fun EncabezadoDetalle(onVolver: () -> Unit) {
         IconButton(onClick = onVolver) {
             Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
         }
-        IconButton(onClick = { /* TODO: guardar como favorito */ }) {
-            Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorito")
+        IconButton(onClick = { favorito = !favorito }) {
+            Icon(if (favorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder, contentDescription = if (favorito) "Quitar favorito" else "Marcar favorito")
         }
     }
 }
