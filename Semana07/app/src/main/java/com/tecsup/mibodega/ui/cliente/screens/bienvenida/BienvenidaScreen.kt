@@ -88,7 +88,7 @@ fun BienvenidaScreen(
         Spacer(Modifier.height(12.dp))
 
         BotonSecundario(
-            texto = "Iniciar sesión",
+            texto = "Iniciar sesión (demo)",
             onClick = onIniciarSesion
         )
 
