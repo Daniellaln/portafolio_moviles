@@ -1,4 +1,4 @@
-package com.leon.tecsupstore
+package com.tecsup.mibodega
 
 import org.junit.Test
 
