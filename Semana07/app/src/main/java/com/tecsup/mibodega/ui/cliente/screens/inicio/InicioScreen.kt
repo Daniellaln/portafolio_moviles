@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -71,12 +69,12 @@ fun InicioScreen(
     onAgregarProducto: (Producto) -> Unit
 ) {
     var categoriaSeleccionada by remember { mutableStateOf(listaCategorias.first()) }
-    var textoBusqueda by remember { mutableStateOf("") }
+
 
     val productosFiltrados = productos.filter { producto ->
         val coincideCategoria = categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
-        val coincideBusqueda = producto.nombre.contains(textoBusqueda, ignoreCase = true)
-        coincideCategoria && coincideBusqueda
+
+        coincideCategoria
     }
 
     Scaffold(
@@ -107,12 +105,13 @@ fun InicioScreen(
                 .padding(horizontal = 16.dp)
         ) {
             OutlinedTextField(
-                value = textoBusqueda,
-                onValueChange = { textoBusqueda = it },
+                value = "",
+                onValueChange = {},
+                enabled = false,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                placeholder = { Text("Buscar productos...") },
+                placeholder = { Text("Buscador disponible en fase 2") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -143,14 +142,14 @@ fun InicioScreen(
                 }
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            LazyColumn(
+
+
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(productosFiltrados) { producto ->
+                items(productosFiltrados, key = { it.id }) { producto ->
                     ProductoCard(
                         producto = producto,
                         onClick = { onProductoClick(producto) },

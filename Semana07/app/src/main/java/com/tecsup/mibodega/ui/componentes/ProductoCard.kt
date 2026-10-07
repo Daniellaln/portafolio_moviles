@@ -85,7 +85,7 @@ fun ProductoCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "S/ %.2f".format(producto.precio),
+                    text = "S/ %.2f".format(java.util.Locale.US, producto.precio),
                     style = MaterialTheme.typography.labelMedium,
                     color = VerdeBodega
                 )
