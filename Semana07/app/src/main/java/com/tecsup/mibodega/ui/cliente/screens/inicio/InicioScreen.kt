@@ -1,240 +1,92 @@
 package com.tecsup.mibodega.ui.cliente.screens.inicio
-
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Receipt
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.tecsup.mibodega.ui.cliente.modelo.Producto
-import com.tecsup.mibodega.ui.cliente.modelo.listaCategorias
-import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
-import com.tecsup.mibodega.ui.componentes.ProductoCard
-import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.GrisClaro
-import com.tecsup.mibodega.ui.theme.VerdeBodega
+import com.tecsup.mibodega.ui.cliente.modelo.*
+import com.tecsup.mibodega.ui.componentes.*
+import kotlinx.coroutines.launch
 
-/**
- * Pantalla 3: Inicio / Productos (mockup "Cliente").
- * La más completa: Scaffold (topBar + bottomBar), LazyRow de categorías
- * y LazyVerticalGrid de productos.
- *
- * @param productos lista completa (fake por ahora, luego vendrá de un ViewModel)
- * @param cantidadCarrito para el badge del carrito en la topBar
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InicioScreen(
-    productos: List<Producto> = listaProductosFake,
-    cantidadCarrito: Int,
-    onVerCarrito: () -> Unit,
-    onProductoClick: (Producto) -> Unit,
-    onAgregarProducto: (Producto) -> Unit,
-    cliente: com.tecsup.mibodega.ui.cliente.modelo.DatosCliente = com.tecsup.mibodega.ui.cliente.modelo.DatosCliente(),
-    pedidos: List<com.tecsup.mibodega.ui.cliente.modelo.Pedido> = emptyList()
-) {
-    var destino by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(0) }
-    var categoriaSeleccionada by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(listaCategorias.first()) }
-
-
-    var busqueda by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("") }
-    val productosFiltrados = com.tecsup.mibodega.ui.cliente.modelo.filtrarProductos(productos, categoriaSeleccionada, busqueda)
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Mi Bodega", fontWeight = FontWeight.Bold) },
-                actions = {
-                    IconButton(onClick = onVerCarrito) {
-                        BadgedBox(
-                            badge = {
-                                if (cantidadCarrito > 0) {
-                                    Badge { Text("$cantidadCarrito") }
-                                }
-                            }
-                        ) {
-                            Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito")
-                        }
-                    }
-                }
-            )
-        },
-        bottomBar = { BarraInferior(destino) { destino = it } }
-    ) { paddingInterno ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingInterno)
-                .padding(horizontal = 16.dp)
-        ) {
-            if (destino == 2) {
-                Text("Mis pedidos", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(vertical = 16.dp))
-                LazyColumn {
-                    if (pedidos.isEmpty()) item { Text("Aún no tienes pedidos.") }
-                    items(pedidos, key = { it.numero }) { pedido ->
-                        Text("Pedido #${pedido.numero} · S/ %.2f".format(java.util.Locale.US, pedido.total), modifier = Modifier.padding(vertical = 12.dp))
-                        Text("${pedido.cliente.direccion} · ${pedido.metodoPago} · En preparación")
-                    }
-                }
-                return@Column
-            }
-            if (destino == 3) {
-                Text("Mi perfil", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(vertical = 16.dp))
-                Text(cliente.nombre.ifBlank { "Cliente de demostración" })
-                Text(cliente.telefono)
-                Text(cliente.direccion)
-                Text(cliente.referencia)
-                Text("Datos guardados en memoria durante esta sesión.", modifier = Modifier.padding(top = 20.dp))
-                return@Column
-            }
-            if (destino == 1) Text("Categorías", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
-            OutlinedTextField(
-                value = busqueda,
-                onValueChange = { busqueda = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                placeholder = { Text("Buscar productos...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = GrisClaro,
-                    focusedContainerColor = GrisClaro,
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
-                    focusedBorderColor = VerdeBodega
-                )
-            )
-
-            Text(
-                text = if (categoriaSeleccionada == "Todos") "Productos destacados" else categoriaSeleccionada,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 20.dp, bottom = 4.dp)
-            )
-
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                items(listaCategorias) { categoria ->
-                    ChipCategoria(
-                        texto = categoria,
-                        seleccionado = categoria == categoriaSeleccionada,
-                        onClick = { categoriaSeleccionada = categoria }
-                    )
-                }
-            }
-
-            LazyColumn(
-
-
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 12.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(productosFiltrados, key = { it.id }) { producto ->
-                    ProductoCard(
-                        producto = producto,
-                        onClick = { onProductoClick(producto) },
-                        onAgregar = { onAgregarProducto(producto) }
-                    )
-                }
-            }
-        }
+fun InicioScreen(productos: List<Producto> = listaProductosFake, cantidadCarrito: Int, onVerCarrito: () -> Unit,
+ onProductoClick: (Producto) -> Unit, onAgregarProducto: (Producto) -> Unit,
+ cliente: DatosCliente = DatosCliente(), pedidos: List<Pedido> = emptyList()) {
+ var destino by rememberSaveable { mutableIntStateOf(0) }
+ var categoria by rememberSaveable { mutableStateOf("Todos") }
+ var busqueda by rememberSaveable { mutableStateOf("") }
+ val lista = filtrarProductos(productos, categoria, busqueda)
+ val snackbar = remember { SnackbarHostState() }
+ val scope = rememberCoroutineScope()
+ val teclado = LocalSoftwareKeyboardController.current
+ Scaffold(snackbarHost = { SnackbarHost(snackbar) }, topBar = {
+  TopAppBar(title = { Column { Text("Mi Bodega", style = MaterialTheme.typography.titleLarge); Text("Cerca de ti, siempre", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) } },
+   colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+   actions = { IconButton(onVerCarrito) { BadgedBox(badge = { if(cantidadCarrito > 0) Badge { Text("$cantidadCarrito") } }) { Icon(Icons.Default.ShoppingBag, "Carrito") } } })
+ }, bottomBar = {
+  Box(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 16.dp, vertical = 12.dp)) {
+   Surface(Modifier.fillMaxWidth().cristal(), shape = RoundedCornerShape(32.dp), color = androidx.compose.ui.graphics.Color.Transparent) {
+    NavigationBar(containerColor = androidx.compose.ui.graphics.Color.Transparent, tonalElevation = 0.dp, windowInsets = WindowInsets(0, 0, 0, 0)) {
+   listOf("Inicio" to Icons.Default.Home, "Categorías" to Icons.Default.GridView, "Pedidos" to Icons.Default.ReceiptLong, "Perfil" to Icons.Default.PersonOutline).forEachIndexed { index, item ->
+    NavigationBarItem(destino == index, { teclado?.hide(); destino = index }, icon = { Icon(item.second, item.first) }, label = { Text(item.first) })
+   }
+  }
+  }
+  }
+ }) { padding ->
+  if(destino == 2) {
+   LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    item { Text("Mis pedidos", style = MaterialTheme.typography.headlineMedium); Text("Tus compras, en un solo lugar.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    if(pedidos.isEmpty()) item { EstadoVacio(Icons.Default.ReceiptLong, "Aún no tienes pedidos.", "Tu primera compra aparecerá aquí.") }
+    items(pedidos.reversed(), key = { it.numero }) { pedido -> Tarjeta {
+     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Pedido #${pedido.numero}", style = MaterialTheme.typography.titleMedium); Text(dinero(pedido.total), color = MaterialTheme.colorScheme.primary) }
+     Text("En preparación", color = MaterialTheme.colorScheme.primary)
+     Text(pedido.items.joinToString { "${it.cantidad} × ${it.producto.nombre}" }, style = MaterialTheme.typography.bodySmall)
+     Text(pedido.cliente.direccion); Text(pedido.metodoPago, style = MaterialTheme.typography.bodySmall)
+    } }
+   }
+  } else if(destino == 3) {
+   LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    item { Text("Mi perfil", style = MaterialTheme.typography.headlineMedium) }
+    item { Tarjeta { Icon(Icons.Default.AccountCircle, null, Modifier.size(56.dp), tint = MaterialTheme.colorScheme.primary); Text(cliente.nombre.ifBlank { "Cliente de demostración" }, style = MaterialTheme.typography.titleLarge); Text(cliente.telefono.ifBlank { "Sin teléfono registrado" }) } }
+    item { Tarjeta { Text("Dirección de entrega", style = MaterialTheme.typography.titleMedium); Text(cliente.direccion.ifBlank { "La puedes completar al hacer tu pedido." }); if(cliente.referencia.isNotBlank()) Text(cliente.referencia, style = MaterialTheme.typography.bodySmall) } }
+   }
+  } else {
+   Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 20.dp)) {
+    Text(if(destino == 1) "Elige tu categoría" else "¿Qué necesitas hoy?", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp, bottom = 12.dp))
+    OutlinedTextField(busqueda, { busqueda = it }, Modifier.fillMaxWidth().clay(base = MaterialTheme.colorScheme.background, hundido = true, radio = 18f), placeholder = { Text("Buscar productos...") },
+     leadingIcon = { Icon(Icons.Default.Search, null) }, trailingIcon = { if(busqueda.isNotEmpty()) IconButton({ busqueda = "" }) { Icon(Icons.Default.Close, "Limpiar búsqueda") } },
+     singleLine = true, shape = RoundedCornerShape(18.dp), keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+     keyboardActions = androidx.compose.foundation.text.KeyboardActions(onSearch = { teclado?.hide() }),
+     colors = OutlinedTextFieldDefaults.colors(unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent, focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent))
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(vertical = 12.dp)) {
+     items(listaCategorias) { nombre -> FilterChip(categoria == nombre, { categoria = nombre }, label = { Text(nombre) }, modifier = Modifier.heightIn(min = 48.dp).padding(vertical = 3.dp).clay(base = if(categoria == nombre) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background, hundido = categoria == nombre, radio = 16f), shape = RoundedCornerShape(16.dp)) }
     }
-}
-
-// Sub-composables PRIVADOS: solo los usa esta pantalla.
-
-@Composable
-private fun ChipCategoria(
-    texto: String,
-    seleccionado: Boolean,
-    onClick: () -> Unit
-) {
-    val fondo = if (seleccionado) VerdeBodega else GrisClaro
-    val contenido = if (seleccionado) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-
-    Row(
-        modifier = Modifier
-            .background(fondo, RoundedCornerShape(20.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-    ) {
-        Text(text = texto, color = contenido, fontWeight = FontWeight.Medium)
+    Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+     Text(if(busqueda.isBlank() && categoria == "Todos") "Tus favoritos de siempre" else "Resultados", style = MaterialTheme.typography.titleMedium)
+     Text("${lista.size} productos", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
-}
-
-@Composable
-private fun BarraInferior(seleccionado: Int, onSeleccionar: (Int) -> Unit) {
-    val items = listOf(
-        Triple("Inicio", Icons.Default.Home, 0),
-        Triple("Categorías", Icons.Default.List, 1),
-        Triple("Pedidos", Icons.Default.Receipt, 2),
-        Triple("Perfil", Icons.Default.Person, 3)
-    )
-    NavigationBar {
-        items.forEach { (etiqueta, icono, indice) ->
-            NavigationBarItem(
-                selected = seleccionado == indice,
-                onClick = { onSeleccionar(indice) },
-                icon = { Icon(icono, contentDescription = etiqueta) },
-                label = { Text(etiqueta) },
-                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
-                    selectedIconColor = VerdeBodega,
-                    selectedTextColor = VerdeBodega
-                )
-            )
-        }
+    LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(bottom = 20.dp)) {
+     if(lista.isEmpty()) item {
+      EstadoVacio(Icons.Default.SearchOff, "No encontramos productos", "Prueba otro nombre o cambia la categoría.")
+      BotonSecundario("Quitar filtros", { busqueda = ""; categoria = "Todos"; teclado?.hide() })
+     }
+     items(lista, key = { it.id }) { producto -> ProductoCard(producto, { teclado?.hide(); onProductoClick(producto) }, {
+      onAgregarProducto(producto)
+      scope.launch { snackbar.currentSnackbarData?.dismiss(); snackbar.showSnackbar("${producto.nombre} agregado", duration = SnackbarDuration.Short) }
+     }) }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun InicioPreview() {
-    BodegaTheme {
-        InicioScreen(
-            cantidadCarrito = 3,
-            onVerCarrito = {},
-            onProductoClick = {},
-            onAgregarProducto = {}
-        )
-    }
+   }
+  }
+ }
 }
