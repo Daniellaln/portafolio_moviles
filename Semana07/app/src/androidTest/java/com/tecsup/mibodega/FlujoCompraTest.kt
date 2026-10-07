@@ -9,9 +9,9 @@ class FlujoCompraTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
     @Test fun compraCompletaConMenuFiltroCantidadesYPopUpTo() {
-        compose.onNodeWithText("Iniciar sesión (demo)").performClick()
+        compose.entrar()
         compose.onNodeWithText("Perfil").performClick()
-        compose.onNodeWithText("Cliente de demostración").assertIsDisplayed()
+        compose.onNodeWithText("Daniella Leon").assertIsDisplayed()
         compose.onNodeWithText("Pedidos").performClick()
         compose.onNodeWithText("Aún no tienes pedidos.").assertIsDisplayed()
         compose.onNodeWithText("Categorías").performClick()
@@ -24,6 +24,7 @@ class FlujoCompraTest {
         compose.onNodeWithContentDescription("Disminuir cantidad").performClick()
         compose.onNodeWithText("S/ 10.50").assertIsDisplayed()
         compose.onNodeWithContentDescription("Eliminar Coca-Cola Original").performClick()
+        compose.onNodeWithText("Eliminar", substring = false).performClick()
         compose.onNodeWithText("Continuar pedido").assertIsNotEnabled()
         compose.onAllNodesWithText("S/ 0.00")[0].assertExists()
         compose.onNodeWithContentDescription("Volver").performClick()
@@ -31,8 +32,9 @@ class FlujoCompraTest {
         compose.onNodeWithContentDescription("Agregar Coca-Cola Original").performClick()
         compose.onNodeWithContentDescription("Carrito").performClick()
         compose.onNodeWithText("Continuar pedido").performClick()
-        compose.onNodeWithText("Confirmar pedido").performScrollTo().assertIsNotEnabled()
-        compose.onAllNodes(hasSetTextAction())[0].performScrollTo().performTextInput("Juan Perez")
+        compose.onNodeWithText("Confirmar pedido").performScrollTo().performClick()
+        compose.onAllNodesWithText("Completa este campo")[0].assertExists()
+        compose.onAllNodes(hasSetTextAction())[0].performScrollTo().performTextReplacement("Juan Perez")
         compose.onAllNodes(hasSetTextAction())[1].performScrollTo().performTextInput("987654321")
         compose.onAllNodes(hasSetTextAction())[2].performScrollTo().performTextInput("Av. Los Olivos 123")
         compose.onAllNodes(hasSetTextAction())[3].performScrollTo().performTextInput("Frente al parque")
@@ -60,7 +62,8 @@ class FlujoCompraTest {
     @Test fun registroValidaYConservaDatos() {
         compose.onNodeWithText("Registrarme").performClick()
         compose.onNodeWithText("Crear cuenta", substring = false).let {
-            compose.onAllNodesWithText("Crear cuenta")[1].assertIsNotEnabled()
+            compose.onAllNodesWithText("Crear cuenta")[1].performScrollTo().performClick()
+            compose.onAllNodesWithText("Completa este campo")[0].assertExists()
         }
         compose.onAllNodes(hasSetTextAction())[0].performScrollTo().performTextInput("Ana")
         compose.onAllNodes(hasSetTextAction())[1].performScrollTo().performTextInput("912345678")

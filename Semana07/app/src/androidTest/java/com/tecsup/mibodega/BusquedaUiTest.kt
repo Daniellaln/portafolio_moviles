@@ -9,7 +9,7 @@ class BusquedaUiTest {
   (it.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(it.window.decorView.windowToken, 0)
  } }
  @Test fun busquedaYCategoriaSeCombinanYSePuedenLimpiar() {
-  compose.onNodeWithText("Iniciar sesión (demo)").performClick()
+  compose.entrar()
   compose.onNode(hasText("Bebidas") and hasClickAction()).performClick()
   compose.onNode(hasSetTextAction()).performTextInput("arroz")
   compose.onNodeWithText("No encontramos productos").assertExists()
@@ -31,7 +31,7 @@ class BusquedaUiTest {
   compose.onNodeWithText("5 productos").assertExists()
  }
  @Test fun carritoSobreviveARecrearLaActividad() {
-  compose.onNodeWithText("Iniciar sesión (demo)").performClick()
+  compose.entrar()
   compose.onNodeWithContentDescription("Agregar Arroz Costeño").performClick()
   compose.onNodeWithContentDescription("Carrito").performClick()
   compose.onNodeWithText("S/ 8.50").assertExists()

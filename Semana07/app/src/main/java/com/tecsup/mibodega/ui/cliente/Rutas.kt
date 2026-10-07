@@ -2,6 +2,8 @@ package com.tecsup.mibodega.ui.cliente
 
 object Rutas {
     const val BIENVENIDA = "bienvenida"
+    const val LOGIN = "login"
+    const val FAVORITOS = "favoritos"
     const val REGISTRO = "registro"
     const val INICIO = "inicio"
     const val DETALLE = "detalle/{productoId}"

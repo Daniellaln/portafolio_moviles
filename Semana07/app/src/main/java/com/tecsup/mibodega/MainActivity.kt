@@ -1,6 +1,9 @@
 package com.tecsup.mibodega
 
 import android.os.Bundle
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,8 +15,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BodegaTheme {
-                ClienteApp()
+            val sistemaOscuro = isSystemInDarkTheme()
+            var oscuro by rememberSaveable { mutableStateOf(sistemaOscuro) }
+            SideEffect {
+                androidx.core.view.WindowCompat.getInsetsController(window, window.decorView).apply {
+                    isAppearanceLightStatusBars = !oscuro
+                    isAppearanceLightNavigationBars = !oscuro
+                }
+            }
+            BodegaTheme(oscuroActivo = oscuro) {
+                ClienteApp(oscuro = oscuro, onCambiarTema = { oscuro = it })
             }
         }
     }

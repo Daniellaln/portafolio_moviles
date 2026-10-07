@@ -21,7 +21,7 @@ import com.tecsup.mibodega.ui.componentes.*
    Text("Mi Bodega", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
    Text("Todo lo que necesitas para tu día,\nsin salir de casa.", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
    BotonPrimario("Registrarme", onRegistrarse, subtexto = "Empieza con tu teléfono")
-   BotonSecundario("Iniciar sesión (demo)", onIniciarSesion)
+   BotonSecundario("Iniciar sesión", onIniciarSesion)
    TextButton(onTerminos) { Text("Términos y condiciones") }
   }
  }

@@ -31,7 +31,7 @@ import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
  */
 
 @Composable
-fun ClienteApp() {
+fun ClienteApp(oscuro: Boolean = false, onCambiarTema: (Boolean) -> Unit = {}) {
     val navController = rememberNavController()
     var mostrarTerminos by remember { mutableStateOf(false) }
     if (mostrarTerminos) {
@@ -43,6 +43,9 @@ fun ClienteApp() {
         )
     }
 
+    var favoritos by rememberSaveable { mutableStateOf(emptyList<Int>()) }
+    var recojo by rememberSaveable { mutableStateOf(false) }
+    fun cambiarFavorito(p: Producto) { favoritos = if(p.id in favoritos) favoritos - p.id else favoritos + p.id }
     var cliente by rememberSaveable(stateSaver = clienteSaver) { mutableStateOf(com.tecsup.mibodega.ui.cliente.modelo.DatosCliente()) }
     var pedidos by rememberSaveable(stateSaver = pedidosSaver) { mutableStateOf<List<com.tecsup.mibodega.ui.cliente.modelo.Pedido>>(emptyList()) }
     // El carrito vive aquí arriba, no en ninguna Screen.
@@ -50,16 +53,32 @@ fun ClienteApp() {
 
     NavHost(
         navController = navController,
-        startDestination = Rutas.BIENVENIDA
+        startDestination = Rutas.BIENVENIDA,
+        // NavHost usa AnimatedContent: desplazamiento corto y fundido, sin animar dos veces.
+        enterTransition = { androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(220)) + androidx.compose.animation.slideInHorizontally(androidx.compose.animation.core.tween(240)) { it / 12 } },
+        exitTransition = { androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(160)) },
+        popEnterTransition = { androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(200)) },
+        popExitTransition = { androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(180)) + androidx.compose.animation.slideOutHorizontally(androidx.compose.animation.core.tween(220)) { it / 12 } }
     ) {
         composable(Rutas.BIENVENIDA) {
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
-                onIniciarSesion = { navController.navigate(Rutas.INICIO) { popUpTo(Rutas.BIENVENIDA) { inclusive = true } } },
+                onIniciarSesion = { navController.navigate(Rutas.LOGIN) { launchSingleTop = true } },
                 onTerminos = { mostrarTerminos = true }
             )
         }
 
+        composable(Rutas.LOGIN) {
+            com.tecsup.mibodega.ui.cliente.screens.login.LoginScreen(onVolver = { navController.popBackStack() }, onEntrar = {
+                cliente = DatosCliente("Daniella Leon")
+                navController.navigate(Rutas.INICIO) { popUpTo(Rutas.BIENVENIDA) { inclusive = true }; launchSingleTop = true }
+            })
+        }
+        composable(Rutas.FAVORITOS) {
+            com.tecsup.mibodega.ui.cliente.screens.favoritos.FavoritosScreen(favoritos, { navController.popBackStack() },
+                { navController.navigate(Rutas.detalle(it.id)) { launchSingleTop = true } },
+                { carrito = agregarProducto(carrito, it, 1) }, ::cambiarFavorito)
+        }
         composable(Rutas.REGISTRO) {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
@@ -77,6 +96,9 @@ fun ClienteApp() {
                 cantidadCarrito = carrito.sumOf { it.cantidad },
                 cliente = cliente,
                 pedidos = pedidos,
+                favoritos = favoritos, onFavorito = ::cambiarFavorito,
+                onVerFavoritos = { navController.navigate(Rutas.FAVORITOS) { launchSingleTop = true } },
+                oscuro = oscuro, onCambiarTema = onCambiarTema,
                 onVerCarrito = { navController.navigate(Rutas.CARRITO) { launchSingleTop = true } },
                 onProductoClick = { producto ->
                     navController.navigate(Rutas.detalle(producto.id))
@@ -102,6 +124,7 @@ fun ClienteApp() {
             }
             DetalleProductoScreen(
                 producto = producto,
+                favorito = producto.id in favoritos, onFavorito = { cambiarFavorito(producto) },
                 onVolver = { navController.popBackStack() },
                 onAgregarAlCarrito = { productoSeleccionado, cantidad ->
                     carrito = com.tecsup.mibodega.ui.cliente.modelo.agregarProducto(carrito, productoSeleccionado, cantidad)
@@ -113,12 +136,13 @@ fun ClienteApp() {
         composable(Rutas.ENTREGA) {
             com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen(
                 cliente = cliente,
-                total = com.tecsup.mibodega.ui.cliente.modelo.totalCarrito(carrito),
+                total = com.tecsup.mibodega.ui.cliente.modelo.totalCarrito(carrito, recojo),
+                recojo = recojo, onRecojo = { recojo = it },
                 onVolver = { navController.popBackStack() },
                 onConfirmar = { datos, pago ->
                     if (carrito.isNotEmpty()) {
                         cliente = datos
-                        val pedido = com.tecsup.mibodega.ui.cliente.modelo.Pedido(1024 + pedidos.size, datos, pago, carrito.toList(), com.tecsup.mibodega.ui.cliente.modelo.totalCarrito(carrito))
+                        val pedido = com.tecsup.mibodega.ui.cliente.modelo.Pedido(1024 + pedidos.size, datos, pago, carrito.toList(), com.tecsup.mibodega.ui.cliente.modelo.totalCarrito(carrito, recojo), recojo)
                         pedidos = pedidos + pedido
                         carrito = emptyList()
                         navController.navigate(Rutas.CONFIRMACION) {
@@ -137,6 +161,7 @@ fun ClienteApp() {
         composable(Rutas.CARRITO) {
             CarritoScreen(
                 carrito = carrito,
+                recojo = recojo, onRecojo = { recojo = it },
                 onVolver = { navController.popBackStack() },
                 onIncrementar = { producto ->
                     carrito = carrito.map {

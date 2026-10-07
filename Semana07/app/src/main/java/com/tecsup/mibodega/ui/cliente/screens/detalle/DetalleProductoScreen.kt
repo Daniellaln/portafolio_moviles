@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.componentes.*
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
-@Composable fun DetalleProductoScreen(producto: Producto, onVolver: () -> Unit, onAgregarAlCarrito: (Producto, Int) -> Unit) {
+@Composable fun DetalleProductoScreen(producto: Producto, onVolver: () -> Unit, onAgregarAlCarrito: (Producto, Int) -> Unit, favorito: Boolean = false, onFavorito: () -> Unit = {}) {
  var cantidad by rememberSaveable(producto.id) { mutableIntStateOf(1) }
  Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
   Column(Modifier.safeDrawingPadding()) {
@@ -21,6 +21,10 @@ import com.tecsup.mibodega.ui.cliente.modelo.Producto
     Encabezado("Detalle del producto", "Elige la cantidad que necesitas", onVolver)
     Surface(Modifier.fillMaxWidth().clay(MaterialTheme.colorScheme.primaryContainer, radio = 32f), shape = RoundedCornerShape(32.dp), color = MaterialTheme.colorScheme.primaryContainer) {
      ImagenProducto(producto, Modifier.fillMaxWidth().height(240.dp).padding(24.dp))
+    }
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+     Text(if(favorito) "En tus favoritos" else "Guárdalo para después", color = MaterialTheme.colorScheme.onSurfaceVariant)
+     IconButton(onFavorito) { Icon(if(favorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder, if(favorito) "Quitar favorito ${producto.nombre}" else "Guardar favorito ${producto.nombre}", tint = MaterialTheme.colorScheme.primary) }
     }
     Text(producto.categoria.uppercase(), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
     Text(producto.nombre, style = MaterialTheme.typography.headlineMedium)

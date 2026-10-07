@@ -25,8 +25,8 @@ import com.tecsup.mibodega.ui.cliente.modelo.*
     Text("Pedido #${pedido.numero}", style = MaterialTheme.typography.titleLarge)
     Text("Total: ${dinero(pedido.total)}", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = .4f))
-    Text("Dirección de entrega", style = MaterialTheme.typography.labelLarge)
-    Text(pedido.cliente.direccion); if(pedido.cliente.referencia.isNotBlank()) Text(pedido.cliente.referencia, style = MaterialTheme.typography.bodySmall)
+    Text(if(pedido.recojo) "Recojo en tienda" else "Dirección de entrega", style = MaterialTheme.typography.labelLarge)
+    Text(if(pedido.recojo) DIRECCION_TIENDA else pedido.cliente.direccion); if(!pedido.recojo && pedido.cliente.referencia.isNotBlank()) Text(pedido.cliente.referencia, style = MaterialTheme.typography.bodySmall)
     Text("Pago: ${pedido.metodoPago}", style = MaterialTheme.typography.bodySmall)
    }
    if(verEstado) Tarjeta { Text("En preparación", style = MaterialTheme.typography.titleMedium); Text("Tu bodega está preparando los productos. El estado es de demostración y no se actualiza por Internet.", style = MaterialTheme.typography.bodyMedium) }
