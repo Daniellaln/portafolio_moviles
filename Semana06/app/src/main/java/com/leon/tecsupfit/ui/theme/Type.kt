@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
+<<<<<<< HEAD
 val Typography =
     Typography(
         headlineLarge =
@@ -28,3 +29,24 @@ val Typography =
         bodyMedium = TextStyle(fontSize = 14.sp, lineHeight = 21.sp),
         bodySmall = TextStyle(fontSize = 12.sp, lineHeight = 18.sp),
     )
+=======
+val Typography = Typography(
+    titleLarge = TextStyle(
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp
+    ),
+    titleMedium = TextStyle(
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp
+    ),
+    bodyLarge = TextStyle(
+        fontSize = 16.sp
+    ),
+    bodyMedium = TextStyle(
+        fontSize = 14.sp
+    ),
+    bodySmall = TextStyle(
+        fontSize = 12.sp
+    )
+)
+>>>>>>> sinia

@@ -2,8 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+<<<<<<< HEAD
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
+=======
+>>>>>>> sinia
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,7 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TecsupFit">
+<<<<<<< HEAD
 
+=======
+>>>>>>> sinia
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -21,6 +27,7 @@
             android:theme="@style/Theme.TecsupFit">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+<<<<<<< HEAD
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -35,6 +42,12 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+=======
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+>>>>>>> sinia
     </application>
 
 </manifest>

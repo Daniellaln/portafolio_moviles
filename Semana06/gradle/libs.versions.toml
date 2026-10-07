@@ -1,5 +1,8 @@
 [versions]
+<<<<<<< HEAD
 ksp = "2.3.5"
+=======
+>>>>>>> sinia
 agp = "9.1.1"
 coreKtx = "1.19.0"
 junit = "4.13.2"
@@ -10,7 +13,10 @@ activityCompose = "1.13.0"
 kotlin = "2.2.10"
 composeBom = "2024.12.01"
 navigationCompose = "2.10.1"
+<<<<<<< HEAD
 coil = "2.7.0"
+=======
+>>>>>>> sinia
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,10 +35,16 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+<<<<<<< HEAD
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+=======
+>>>>>>> sinia
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+<<<<<<< HEAD
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+=======
+>>>>>>> sinia

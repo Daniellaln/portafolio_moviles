@@ -1,5 +1,6 @@
 package com.leon.tecsupfit.data
 
+<<<<<<< HEAD
 import androidx.room.*
 
 @Entity(
@@ -38,3 +39,19 @@ data class ReservaConClase(val reserva: Reserva, val clase: ClaseFitness) {
             else -> "Confirmada"
         }
 }
+=======
+enum class EstadoReserva {
+    CONFIRMADA,
+    COMPLETADA
+}
+
+/**
+ * Representa una clase que el usuario ya reservó.
+ */
+data class Reserva(
+    val id: Int,
+    val clase: ClaseFitness,
+    val fecha: String,
+    val estado: EstadoReserva
+)
+>>>>>>> sinia

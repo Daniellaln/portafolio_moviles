@@ -1,0 +1,240 @@
+package com.tecsup.mibodega.ui.cliente.screens.inicio
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.tecsup.mibodega.ui.cliente.modelo.Producto
+import com.tecsup.mibodega.ui.cliente.modelo.listaCategorias
+import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
+import com.tecsup.mibodega.ui.componentes.ProductoCard
+import com.tecsup.mibodega.ui.theme.BodegaTheme
+import com.tecsup.mibodega.ui.theme.GrisClaro
+import com.tecsup.mibodega.ui.theme.VerdeBodega
+
+/**
+ * Pantalla 3: Inicio / Productos (mockup "Cliente").
+ * La más completa: Scaffold (topBar + bottomBar), LazyRow de categorías
+ * y LazyVerticalGrid de productos.
+ *
+ * @param productos lista completa (fake por ahora, luego vendrá de un ViewModel)
+ * @param cantidadCarrito para el badge del carrito en la topBar
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InicioScreen(
+    productos: List<Producto> = listaProductosFake,
+    cantidadCarrito: Int,
+    onVerCarrito: () -> Unit,
+    onProductoClick: (Producto) -> Unit,
+    onAgregarProducto: (Producto) -> Unit,
+    cliente: com.tecsup.mibodega.ui.cliente.modelo.DatosCliente = com.tecsup.mibodega.ui.cliente.modelo.DatosCliente(),
+    pedidos: List<com.tecsup.mibodega.ui.cliente.modelo.Pedido> = emptyList()
+) {
+    var destino by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(0) }
+    var categoriaSeleccionada by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(listaCategorias.first()) }
+
+
+    var busqueda by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("") }
+    val productosFiltrados = com.tecsup.mibodega.ui.cliente.modelo.filtrarProductos(productos, categoriaSeleccionada, busqueda)
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Mi Bodega", fontWeight = FontWeight.Bold) },
+                actions = {
+                    IconButton(onClick = onVerCarrito) {
+                        BadgedBox(
+                            badge = {
+                                if (cantidadCarrito > 0) {
+                                    Badge { Text("$cantidadCarrito") }
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito")
+                        }
+                    }
+                }
+            )
+        },
+        bottomBar = { BarraInferior(destino) { destino = it } }
+    ) { paddingInterno ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingInterno)
+                .padding(horizontal = 16.dp)
+        ) {
+            if (destino == 2) {
+                Text("Mis pedidos", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(vertical = 16.dp))
+                LazyColumn {
+                    if (pedidos.isEmpty()) item { Text("Aún no tienes pedidos.") }
+                    items(pedidos, key = { it.numero }) { pedido ->
+                        Text("Pedido #${pedido.numero} · S/ %.2f".format(java.util.Locale.US, pedido.total), modifier = Modifier.padding(vertical = 12.dp))
+                        Text("${pedido.cliente.direccion} · ${pedido.metodoPago} · En preparación")
+                    }
+                }
+                return@Column
+            }
+            if (destino == 3) {
+                Text("Mi perfil", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(vertical = 16.dp))
+                Text(cliente.nombre.ifBlank { "Cliente de demostración" })
+                Text(cliente.telefono)
+                Text(cliente.direccion)
+                Text(cliente.referencia)
+                Text("Datos guardados en memoria durante esta sesión.", modifier = Modifier.padding(top = 20.dp))
+                return@Column
+            }
+            if (destino == 1) Text("Categorías", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+            OutlinedTextField(
+                value = busqueda,
+                onValueChange = { busqueda = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                placeholder = { Text("Buscar productos...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = GrisClaro,
+                    focusedContainerColor = GrisClaro,
+                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                    focusedBorderColor = VerdeBodega
+                )
+            )
+
+            Text(
+                text = if (categoriaSeleccionada == "Todos") "Productos destacados" else categoriaSeleccionada,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 20.dp, bottom = 4.dp)
+            )
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(listaCategorias) { categoria ->
+                    ChipCategoria(
+                        texto = categoria,
+                        seleccionado = categoria == categoriaSeleccionada,
+                        onClick = { categoriaSeleccionada = categoria }
+                    )
+                }
+            }
+
+            LazyColumn(
+
+
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(vertical = 12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(productosFiltrados, key = { it.id }) { producto ->
+                    ProductoCard(
+                        producto = producto,
+                        onClick = { onProductoClick(producto) },
+                        onAgregar = { onAgregarProducto(producto) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Sub-composables PRIVADOS: solo los usa esta pantalla.
+
+@Composable
+private fun ChipCategoria(
+    texto: String,
+    seleccionado: Boolean,
+    onClick: () -> Unit
+) {
+    val fondo = if (seleccionado) VerdeBodega else GrisClaro
+    val contenido = if (seleccionado) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+
+    Row(
+        modifier = Modifier
+            .background(fondo, RoundedCornerShape(20.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+    ) {
+        Text(text = texto, color = contenido, fontWeight = FontWeight.Medium)
+    }
+}
+
+@Composable
+private fun BarraInferior(seleccionado: Int, onSeleccionar: (Int) -> Unit) {
+    val items = listOf(
+        Triple("Inicio", Icons.Default.Home, 0),
+        Triple("Categorías", Icons.Default.List, 1),
+        Triple("Pedidos", Icons.Default.Receipt, 2),
+        Triple("Perfil", Icons.Default.Person, 3)
+    )
+    NavigationBar {
+        items.forEach { (etiqueta, icono, indice) ->
+            NavigationBarItem(
+                selected = seleccionado == indice,
+                onClick = { onSeleccionar(indice) },
+                icon = { Icon(icono, contentDescription = etiqueta) },
+                label = { Text(etiqueta) },
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = VerdeBodega,
+                    selectedTextColor = VerdeBodega
+                )
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun InicioPreview() {
+    BodegaTheme {
+        InicioScreen(
+            cantidadCarrito = 3,
+            onVerCarrito = {},
+            onProductoClick = {},
+            onAgregarProducto = {}
+        )
+    }
+}
